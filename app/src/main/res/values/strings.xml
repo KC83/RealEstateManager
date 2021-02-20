@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Real Estate Manager</string>
+    <string name="location_maps">location_maps</string>
+    <string name="location_image">location_image</string>
+    <string name="bedroom_image">bedroom_image</string>
+    <string name="bathroom_image">bathroom_image</string>
+    <string name="room_image">room_image</string>
+    <string name="surface_image">surface_image</string>
+    <string name="estate_image">estate_image</string>
+
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_estate_list">Estates</string>
+    <string name="title_estate_detail">Estate Detail</string>
+
+    <!-- FORM -->
+    <string name="status">Statut</string>
+    <string name="agent">Agent immobilier</string>
+    <string name="insert_date">Date d\'entrée sur le marché</string>
+    <string name="sale_date">Date de vente</string>
+    <string name="type">Type</string>
+    <string name="price">Prix</string>
+    <string name="description">Description</string>
+    <string name="surface">Surface</string>
+    <string name="number_of_rooms">Nombre de pièces</string>
+    <string name="number_of_bedrooms">Nombre de chambres</string>
+    <string name="number_of_bathrooms">Nombre de salles de bains</string>
+    <string name="location">Adresse</string>
+    <string name="zip_code">Code postal</string>
+    <string name="city">Ville</string>
+    <string name="country">Pays</string>
+    <string name="form_title">Ajout d\'un nouveau bien</string>
+    <string name="btn_save">ENREGISTRER</string>
+</resources>

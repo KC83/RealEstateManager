@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/images_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/description_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        app:cardCornerRadius="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/information_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/images_layout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/card_description_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/description"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/card_description_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="150dp"
+                android:text="@string/app_name" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/information_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:minHeight="250dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:paddingTop="20dp"
+        app:layout_constraintCircleRadius="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minWidth="350dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- SURFACE -->
+                <ImageView
+                    android:id="@+id/surface_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/surface_image"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="5dp"
+                    android:paddingTop="0dp"
+                    android:src="@drawable/ic_measure"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/surface_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/surface"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/surface_image"
+                    app:layout_constraintTop_toTopOf="@+id/surface_image" />
+
+                <TextView
+                    android:id="@+id/surface_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/surface_image"
+                    app:layout_constraintStart_toEndOf="@+id/surface_image"
+                    app:layout_constraintTop_toBottomOf="@+id/surface_title" />
+
+                <!-- NUMBER OF ROOMS -->
+                <ImageView
+                    android:id="@+id/rooms_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/room_image"
+                    android:paddingStart="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="5dp"
+                    android:src="@drawable/ic_home"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/surface_image" />
+
+                <TextView
+                    android:id="@+id/rooms_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_of_rooms"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/rooms_image"
+                    app:layout_constraintTop_toBottomOf="@+id/surface_image" />
+
+                <TextView
+                    android:id="@+id/rooms_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/rooms_image"
+                    app:layout_constraintStart_toEndOf="@+id/rooms_image"
+                    app:layout_constraintTop_toBottomOf="@+id/rooms_title" />
+
+                <!-- NUMBER OF BATHROOMS -->
+                <ImageView
+                    android:id="@+id/bathrooms_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/bathroom_image"
+                    android:paddingStart="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="5dp"
+                    android:src="@drawable/ic_bathtub"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rooms_image" />
+
+                <TextView
+                    android:id="@+id/bathrooms_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_of_bathrooms"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/bathrooms_image"
+                    app:layout_constraintTop_toBottomOf="@+id/rooms_image" />
+
+                <TextView
+                    android:id="@+id/bathrooms_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/bathrooms_image"
+                    app:layout_constraintStart_toEndOf="@+id/bathrooms_image"
+                    app:layout_constraintTop_toBottomOf="@+id/bathrooms_title" />
+
+                <!-- NUMBER OF BEDROOMS -->
+                <ImageView
+                    android:id="@+id/bedrooms_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/bedroom_image"
+                    android:paddingStart="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="5dp"
+                    android:src="@drawable/ic_bed"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/bathrooms_image" />
+
+                <TextView
+                    android:id="@+id/bedrooms_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/number_of_bedrooms"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/bedrooms_image"
+                    app:layout_constraintTop_toBottomOf="@+id/bathrooms_image" />
+
+                <TextView
+                    android:id="@+id/bedrooms_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/bedrooms_image"
+                    app:layout_constraintStart_toEndOf="@+id/bedrooms_image"
+                    app:layout_constraintTop_toBottomOf="@+id/bedrooms_title" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:minWidth="350dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- LOCATION -->
+
+                <ImageView
+                    android:id="@+id/location_image"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="@string/location_image"
+                    android:paddingStart="0dp"
+                    android:paddingTop="0dp"
+                    android:paddingEnd="5dp"
+                    android:src="@android:color/holo_red_dark"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/location_title" />
+
+                <TextView
+                    android:id="@+id/location_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/location"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/location_image"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/location_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    app:layout_constraintBottom_toBottomOf="@+id/location_image"
+                    app:layout_constraintStart_toEndOf="@+id/location_image"
+                    app:layout_constraintTop_toBottomOf="@+id/location_title" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="250dp"
+                    android:layout_height="match_parent"
+                    android:contentDescription="@string/location_maps"
+                    android:src="@android:color/holo_blue_dark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.detail.EstateDetailActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        tools:context=".ui.detail.EstateDetailActivity">
+
+
+
+
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>-->
