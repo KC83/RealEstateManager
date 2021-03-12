@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "estate_place")
 data class EstatePlace(
-        @PrimaryKey(autoGenerate = true) val id: Int,
-        @ColumnInfo(name = "estate_id") val estateId: Int,
-        @ColumnInfo(name = "place_id") val placeId: Int
+        @PrimaryKey(autoGenerate = true) val id: Long = 0,
+        @ColumnInfo(name = "estate_id") val estateId: Long,
+        @ColumnInfo(name = "place_id") val placeId: Long
 )

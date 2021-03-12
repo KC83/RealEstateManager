@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.dummy.DropdownItem
+import com.openclassrooms.realestatemanager.utils.DropdownItem
 
 class DropdownAdapter(private val adapterContext: Context, private val values: List<DropdownItem>)
     : ArrayAdapter<DropdownItem>(adapterContext, 0, values) {

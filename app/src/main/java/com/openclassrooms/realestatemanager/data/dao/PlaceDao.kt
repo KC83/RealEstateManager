@@ -1,16 +1,16 @@
 package com.openclassrooms.realestatemanager.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.openclassrooms.realestatemanager.data.model.Place
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaceDao {
     @Query("SELECT * FROM place ORDER BY name")
-    fun getPlaces(): LiveData<List<Place>>
+    fun getPlaces(): Flow<List<Place>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(place: Place)

@@ -1,17 +1,17 @@
 package com.openclassrooms.realestatemanager.domain.repository
 
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.dao.EstateDao
 import com.openclassrooms.realestatemanager.data.model.Estate
+import kotlinx.coroutines.flow.Flow
 
 class EstateRepository(private val estateDao: EstateDao) {
-    val allEstates: LiveData<List<Estate>> = estateDao.getEstates()
+    val allEstates: Flow<List<Estate>> = estateDao.getEstates()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(estate: Estate) {
-        estateDao.insert(estate)
+    suspend fun insert(estate: Estate): Long {
+        return estateDao.insert(estate)
     }
 
     @Suppress("RedundantSuspendModifier")

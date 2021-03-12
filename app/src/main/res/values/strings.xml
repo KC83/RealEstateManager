@@ -31,4 +31,9 @@
     <string name="country">Pays</string>
     <string name="form_title">Ajout d\'un nouveau bien</string>
     <string name="btn_save">ENREGISTRER</string>
+    <string name="form_error">Champ obligatoire</string>
+    <string name="error_happened">Une erreur s\'est produite</string>
+    <string name="error_input">Vous devez remplir tous les champs pour enregistrer ce bien.</string>
+    <string name="error_image">Vous devez ajouter une image pour enregistrer ce bien.</string>
+
 </resources>

@@ -1,51 +1,78 @@
 package com.openclassrooms.realestatemanager.utils
 
-import com.openclassrooms.realestatemanager.data.model.Status
-import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
-import com.openclassrooms.realestatemanager.dummy.DropdownItem
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
+import android.content.Context
+import android.content.ContextWrapper
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.openclassrooms.realestatemanager.R
+import java.io.*
 import java.util.*
-import kotlin.collections.HashMap
 
 class Utils {
     companion object {
-        fun getStatus(): List<DropdownItem> {
+        /**
+         * ACTIVITY REQUEST
+         */
+        const val FORM_ACTIVITY_REQUEST = 100
 
-            /*val list: List<DropdownItem> = Arrays.asList()
-            val allStatus: Flow<List<Status>> = RealEstateApplication().StatusRepository.allStatus
-            allStatus.map {
-                for (status in it) {
-                    list.toMutableList().add(DropdownItem(status.name))
-                }
+        /**
+         * PERMISSION REQUEST
+         */
+        const val CAMERA_REQUEST = 100
+        const val GALLERY_REQUEST = 200
+
+        /**
+         * ACTIVITY EXTRA
+         */
+        const val EXTRA_ESTATE = "EXTRA_ESTATE"
+        const val EXTRA_ESTATE_IMAGE = "EXTRA_ESTATE_IMAGE"
+
+        /**
+         * FORM CONSTANTS
+         */
+        const val TEXT_INPUT_EDIT_TEXT = "TEXT_INPUT_EDIT_TEXT"
+        const val AUTOCOMPLETE_TEXT_VIEW = "AUTOCOMPLETE_TEXT_VIEW"
+        const val SLIDER = "SLIDER"
+
+        const val DROPDOWN_AGENT = "AGENT"
+        const val DROPDOWN_STATUS = "STATUS"
+        const val DROPDOWN_TYPE = "TYPE"
+
+
+
+        // Method to save an image to internal storage
+        fun saveImageToInternalStorage(bitmap: Bitmap, applicationContext: Context?): Uri {
+            // Get the context wrapper instance
+            val wrapper = ContextWrapper(applicationContext)
+
+            // Initializing a new file
+            // The bellow line return a directory in internal storage
+            var file = wrapper.getDir("images", Context.MODE_PRIVATE)
+
+            // Create a file to save the image
+            file = File(file, "${UUID.randomUUID()}.jpg")
+
+            try {
+                // Get the file output stream
+                val stream: OutputStream = FileOutputStream(file)
+
+                // Compress bitmap
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+
+                // Flush the stream
+                stream.flush()
+
+                // Close stream
+                stream.close()
+            } catch (e: IOException){ // Catch the exception
+                e.printStackTrace()
             }
 
-            return list
-*/
-            return Arrays.asList(
-                    DropdownItem("A vendre"),
-                    DropdownItem("Vendu")
-            )
-        }
-
-        fun getAgent(): List<DropdownItem> {
-            return Arrays.asList(
-                    DropdownItem("Kelly CHIAROTTI"),
-                    DropdownItem("Marie MARTIN"),
-                    DropdownItem("Jean LEBLANC")
-            )
-        }
-
-        fun getType(): List<DropdownItem> {
-            return Arrays.asList(
-                    DropdownItem("Maison"),
-                    DropdownItem("Villa"),
-                    DropdownItem("Appartement"),
-                    DropdownItem("Loft"),
-                    DropdownItem("Manoir"),
-                    DropdownItem("Terrain")
-            )
+            // Return the saved image uri
+            return Uri.parse(file.absolutePath)
         }
     }
 }

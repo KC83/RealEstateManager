@@ -6,28 +6,31 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
 class RealEstateApplication : Application() {
-    val applicationScope = CoroutineScope(SupervisorJob())
+    private val applicationScope = CoroutineScope(SupervisorJob())
 
-    val database by lazy {
+    private val database by lazy {
         RealEstateRoomDatabase.getDatabase(this, applicationScope)
     }
 
     val agentRepository by lazy {
         AgentRepository(database.agentDao())
     }
-    val EstatePlaceRepository by lazy {
+    val estatePlaceRepository by lazy {
         EstatePlaceRepository(database.estatePlaceDao(), null)
     }
-    val EstateRepository by lazy {
+    val estateRepository by lazy {
         EstateRepository(database.estateDao())
     }
-    val PlaceRepository by lazy {
+    val placeRepository by lazy {
         PlaceRepository(database.placeDao())
     }
-    val StatusRepository by lazy {
+    val statusRepository by lazy {
         StatusRepository(database.statusDao())
     }
-    val TypeRepository by lazy {
+    val typeRepository by lazy {
         TypeRepository(database.typeDao())
+    }
+    val estateImageRepository by lazy {
+        EstateImageRepository(database.estateImageDao(), null)
     }
 }

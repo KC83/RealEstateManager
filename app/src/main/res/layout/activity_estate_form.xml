@@ -184,6 +184,7 @@
             app:startIconDrawable="@drawable/ic_measure_small">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_surface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal" />
@@ -203,6 +204,7 @@
             app:startIconDrawable="@drawable/ic_home_small">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_rooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -222,6 +224,7 @@
             app:startIconDrawable="@drawable/ic_bathtub_small">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_bathrooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -241,6 +244,7 @@
             app:startIconDrawable="@drawable/ic_bed_small">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_bedrooms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -262,6 +266,7 @@
             app:layout_constraintTop_toBottomOf="@+id/form_text_input_bedrooms">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_description"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:gravity="top"
@@ -285,6 +290,7 @@
             app:startIconDrawable="@drawable/ic_placeholder_small">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress" />
@@ -304,6 +310,7 @@
             app:layout_constraintTop_toBottomOf="@+id/form_text_input_location">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_zip_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
@@ -322,6 +329,7 @@
             app:layout_constraintTop_toBottomOf="@+id/form_text_input_location">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress" />
@@ -340,6 +348,7 @@
             app:layout_constraintTop_toBottomOf="@+id/form_text_input_zip_code">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/form_text_input_edit_country"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPostalAddress" />

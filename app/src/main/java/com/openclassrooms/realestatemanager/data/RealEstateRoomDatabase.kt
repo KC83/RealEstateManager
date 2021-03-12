@@ -10,11 +10,12 @@ import com.openclassrooms.realestatemanager.data.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = arrayOf(Agent::class, Estate::class, EstatePlace::class, Place::class, Status::class, Type::class), version = 1, exportSchema = false)
+@Database(entities = arrayOf(Agent::class, Estate::class, EstatePlace::class, EstateImage::class, Place::class, Status::class, Type::class), version = 1, exportSchema = false)
 abstract class RealEstateRoomDatabase : RoomDatabase() {
     abstract fun agentDao(): AgentDao
     abstract fun estateDao(): EstateDao
     abstract fun estatePlaceDao(): EstatePlaceDao
+    abstract fun estateImageDao(): EstateImageDao
     abstract fun placeDao(): PlaceDao
     abstract fun statusDao(): StatusDao
     abstract fun typeDao(): TypeDao
@@ -40,11 +41,11 @@ abstract class RealEstateRoomDatabase : RoomDatabase() {
             INSTANCE?.let { database ->
                 scope.launch {
                     val agentDao = database.agentDao()
-                    agentDao.insert(Agent(firstName = "Vincent", lastName = "Dupond"))
-                    agentDao.insert(Agent(firstName = "Lisa", lastName = "Martin"))
-                    agentDao.insert(Agent(firstName = "Olivia", lastName = "Meyer"))
-                    agentDao.insert(Agent(firstName = "Arthur", lastName = "Legrand"))
-                    agentDao.insert(Agent(firstName = "Charlotte", lastName = "Lacas"))
+                    agentDao.insert(Agent(fullName = "Vincent Dupond"))
+                    agentDao.insert(Agent(fullName = "Lisa Martin"))
+                    agentDao.insert(Agent(fullName = "Olivia Meyer"))
+                    agentDao.insert(Agent(fullName = "Arthur Legrand"))
+                    agentDao.insert(Agent(fullName = "Charlotte Lacas"))
 
                     val statusDao = database.statusDao()
                     statusDao.insert(Status(name = "A vendre"))

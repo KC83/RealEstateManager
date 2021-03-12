@@ -8,21 +8,24 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.dummy.DummyContent
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailActivity
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
+import com.openclassrooms.realestatemanager.ui.viewmodel.TypeViewModel
+import kotlin.math.roundToInt
 
-class EstateListAdapter(private val parentActivity: EstateListActivity, private val values: List<DummyContent.DummyItem>, private val twoPane: Boolean) :
+class EstateListAdapter(private val parentActivity: EstateListActivity, private val values: List<Estate>, private val twoPane: Boolean, private val typeViewModel: TypeViewModel) :
     RecyclerView.Adapter<EstateListAdapter.ViewHolder>() {
         private val onClickListener: View.OnClickListener
 
         init {
             onClickListener = View.OnClickListener { v ->
-                val item = v.tag as DummyContent.DummyItem
+                val item = v.tag as Estate
                 if (twoPane) {
                     val fragment = EstateDetailFragment().apply {
                         arguments = Bundle().apply {
-                            putString(EstateDetailFragment.ARG_ITEM_ID, item.id)
+                            putString(EstateDetailFragment.ARG_ITEM_ID, item.id.toString())
                         }
                     }
                     parentActivity.supportFragmentManager
@@ -31,7 +34,7 @@ class EstateListAdapter(private val parentActivity: EstateListActivity, private 
                             .commit()
                 } else {
                     val intent = Intent(v.context, EstateDetailActivity::class.java).apply {
-                        putExtra(EstateDetailFragment.ARG_ITEM_ID, item.id)
+                        putExtra(EstateDetailFragment.ARG_ITEM_ID, item.id.toString())
                     }
                     v.context.startActivity(intent)
                 }
@@ -45,8 +48,10 @@ class EstateListAdapter(private val parentActivity: EstateListActivity, private 
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
-            holder.idView.text = item.id
-            holder.contentView.text = item.content
+
+            holder.nameView.text = item.type
+            holder.cityView.text = item.city
+            holder.priceView.text = String.format("$%.2f", item.price)
 
             with(holder.itemView) {
                 tag = item
@@ -59,7 +64,8 @@ class EstateListAdapter(private val parentActivity: EstateListActivity, private 
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val idView: TextView = view.findViewById(R.id.item_name)
-            val contentView: TextView = view.findViewById(R.id.item_city)
+            val nameView: TextView = view.findViewById(R.id.item_name)
+            val cityView: TextView = view.findViewById(R.id.item_city)
+            val priceView: TextView = view.findViewById(R.id.item_price)
         }
 }

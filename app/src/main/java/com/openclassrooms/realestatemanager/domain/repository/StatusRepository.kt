@@ -1,12 +1,12 @@
 package com.openclassrooms.realestatemanager.domain.repository
 
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.LiveData
 import com.openclassrooms.realestatemanager.data.dao.StatusDao
 import com.openclassrooms.realestatemanager.data.model.Status
+import kotlinx.coroutines.flow.Flow
 
 class StatusRepository(private val statusDao: StatusDao) {
-    val allStatus: LiveData<List<Status>> = statusDao.getStatus()
+    val allStatus: Flow<List<Status>> = statusDao.getStatus()
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

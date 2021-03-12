@@ -6,7 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "agent")
 data class Agent(
-        @PrimaryKey(autoGenerate = true) val id: Int = 0,
-        @ColumnInfo(name = "first_name") val firstName: String,
-        @ColumnInfo(name = "last_name") val lastName: String
+        @PrimaryKey(autoGenerate = true) val id: Long = 0,
+        @ColumnInfo(name = "full_name") val fullName: String
 )
