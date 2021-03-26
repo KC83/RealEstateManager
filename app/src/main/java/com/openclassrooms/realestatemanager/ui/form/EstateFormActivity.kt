@@ -1,41 +1,34 @@
 package com.openclassrooms.realestatemanager.ui.form
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.text.InputType
 import android.view.MotionEvent
-import android.widget.AutoCompleteTextView
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputEditText
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.model.Agent
-import com.openclassrooms.realestatemanager.data.model.Estate
-import com.openclassrooms.realestatemanager.data.model.Status
-import com.openclassrooms.realestatemanager.data.model.Type
+import com.openclassrooms.realestatemanager.data.model.*
 import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
-import com.openclassrooms.realestatemanager.utils.DropdownItem
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
+import com.openclassrooms.realestatemanager.utils.DropdownItem
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.Serializable
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
-
 class EstateFormActivity : AppCompatActivity() {
+    private val images: MutableList<EstateImage> = mutableListOf()
     private val statusViewModel: StatusViewModel by viewModels {
         StatusViewModelFactory((application as RealEstateApplication).statusRepository)
     }
@@ -61,56 +54,40 @@ class EstateFormActivity : AppCompatActivity() {
             return@setLabelFormatter "$${value.roundToInt()}"
         }
 
-        // Add action when add image on click
-        val image = findViewById<ImageView>(R.id.form_image_view_image)
-        image.setOnClickListener { view ->
-            if (ContextCompat.checkSelfPermission(view.context, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(view.context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(view.context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) &&
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) &&
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    setImageBottomSheet()
-                } else {
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), Utils.CAMERA_REQUEST)
-                }
-            } else {
-                setImageBottomSheet()
-            }
-        }
-
         // Set datePicker for the insert date
         setDate(R.id.form_text_input_edit_insert_date)
         // Set datePicker for the sale date
         setDate(R.id.form_text_input_edit_sale_date)
 
+        setImageRecyclerView(View(this))
+
         val btnSave = findViewById<Button>(R.id.form_btn_save)
-        btnSave.setOnClickListener { view ->
+        btnSave.setOnClickListener {
             val estate = Estate(
-                    status = getStringValue(Utils.AUTOCOMPLETE_TEXT_VIEW,R.id.form_autocomplete_status),
-                    type = getStringValue(Utils.AUTOCOMPLETE_TEXT_VIEW,R.id.form_autocomplete_type),
-                    agent = getStringValue(Utils.AUTOCOMPLETE_TEXT_VIEW,R.id.form_autocomplete_agent),
-                    insertDate = getStringValue(Utils.TEXT_INPUT_EDIT_TEXT,R.id.form_text_input_edit_insert_date),
-                    saleDate = getStringValue(Utils.TEXT_INPUT_EDIT_TEXT,R.id.form_text_input_edit_sale_date),
+                    statusId = getLongValue(R.id.form_autocomplete_status),
+                    typeId = getLongValue(R.id.form_autocomplete_type),
+                    agentId = getLongValue(R.id.form_autocomplete_agent),
+                    insertDate = getStringValue(R.id.form_text_input_edit_insert_date),
+                    saleDate = getStringValue(R.id.form_text_input_edit_sale_date),
                     price = getFloatValue(Utils.SLIDER, R.id.form_slider_price),
                     surface = getFloatValue(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_surface),
                     numberRooms = getIntValue(R.id.form_text_input_edit_rooms),
                     numberBathrooms = getIntValue(R.id.form_text_input_edit_bathrooms),
                     numberBedrooms = getIntValue(R.id.form_text_input_edit_bedrooms),
-                    description = getStringValue(Utils.TEXT_INPUT_EDIT_TEXT,R.id.form_text_input_edit_description),
-                    location = getStringValue(Utils.TEXT_INPUT_EDIT_TEXT,R.id.form_text_input_edit_location),
-                    zipCode = getStringValue(Utils.TEXT_INPUT_EDIT_TEXT,R.id.form_text_input_edit_zip_code),
-                    city = getStringValue(Utils.TEXT_INPUT_EDIT_TEXT,R.id.form_text_input_edit_city),
-                    country = getStringValue(Utils.TEXT_INPUT_EDIT_TEXT,R.id.form_text_input_edit_country)
+                    description = getStringValue(R.id.form_text_input_edit_description),
+                    location = getStringValue(R.id.form_text_input_edit_location),
+                    zipCode = getStringValue(R.id.form_text_input_edit_zip_code),
+                    city = getStringValue(R.id.form_text_input_edit_city),
+                    country = getStringValue(R.id.form_text_input_edit_country)
             )
 
             // Check if inputs are not empty
             if (checkInput(estate)) {
                 // Check if image is not empty
-                if (image.tag.toString().isNotEmpty()) {
+                if (images.size > 1) {
                     val replyIntent= Intent()
                     replyIntent.putExtra(Utils.EXTRA_ESTATE, estate as Serializable)
-                    replyIntent.putExtra(Utils.EXTRA_ESTATE_IMAGE, image.tag.toString())
+                    replyIntent.putExtra(Utils.EXTRA_ESTATE_IMAGE, images as Serializable)
                     setResult(Activity.RESULT_OK,replyIntent)
                     finish()
                 } else {
@@ -137,35 +114,30 @@ class EstateFormActivity : AppCompatActivity() {
      */
     private fun getListDropdownItem(inputType: String): List<DropdownItem> {
         val list: MutableList<DropdownItem> = ArrayList()
-        if (inputType == Utils.DROPDOWN_AGENT) {
-            agentViewModel.allAgents.observe(this, { allAgents ->
-                allAgents.forEach { agent ->
-                    list.add(DropdownItem(agent.fullName))
-                }
-            })
-        } else if (inputType == Utils.DROPDOWN_STATUS) {
-            statusViewModel.allStatus.observe(this, { allStatus ->
-                allStatus.forEach { status ->
-                    list.add(DropdownItem(status.name))
-                }
-            })
-        } else if (inputType == Utils.DROPDOWN_TYPE) {
-            typeViewModel.allTypes.observe(this, { allTypes ->
-                allTypes.forEach { type ->
-                    list.add(DropdownItem(type.name))
-                }
-            })
+        when (inputType) {
+            Utils.DROPDOWN_AGENT -> {
+                agentViewModel.allAgents.observe(this, { allAgents ->
+                    allAgents.forEach { agent ->
+                        list.add(DropdownItem(agent.fullName))
+                    }
+                })
+            }
+            Utils.DROPDOWN_STATUS -> {
+                statusViewModel.allStatus.observe(this, { allStatus ->
+                    allStatus.forEach { status ->
+                        list.add(DropdownItem(status.name))
+                    }
+                })
+            }
+            Utils.DROPDOWN_TYPE -> {
+                typeViewModel.allTypes.observe(this, { allTypes ->
+                    allTypes.forEach { type ->
+                        list.add(DropdownItem(type.name))
+                    }
+                })
+            }
         }
         return list
-    }
-
-    /**
-     * Add image bottom sheet
-     */
-    private fun setImageBottomSheet() {
-        val imageView = findViewById<ImageView>(R.id.form_image_view_image)
-        val imageBottomSheetDialogFragment = ImageBottomSheetDialogFragment(imageView, this.contentResolver)
-        imageBottomSheetDialogFragment.show(supportFragmentManager, "ImageBottomSheetDialogFragment")
     }
 
     /**
@@ -209,17 +181,33 @@ class EstateFormActivity : AppCompatActivity() {
         }
     }
 
+    private fun setImageRecyclerView(view: View) {
+        val pager = this.findViewById<ViewPager>(R.id.form_image_view_pager)
+        images.add(EstateImage(estateId = 0, uri = Utils.getUriAddImage(this).toString(), name = ""))
+        val imageViewPagerAdapter = ImageViewPagerAdapter(this, images, this, view, pager)
+
+        pager.adapter = imageViewPagerAdapter
+    }
+
     //### GET VALUES ###
-    private fun getStringValue(inputType: String, @IdRes id: Int): String {
-        var value = ""
-        when (inputType) {
-            Utils.AUTOCOMPLETE_TEXT_VIEW -> {
-                val input = findViewById<AutoCompleteTextView>(id)
-                value = input.text.toString()
+    private fun getStringValue(@IdRes id: Int): String {
+        val input = findViewById<TextInputEditText>(id)
+        return input.text.toString()
+    }
+    private fun getLongValue(@IdRes id: Int): Long {
+        var value = 0L
+        val input = findViewById<AutoCompleteTextView>(id)
+        val inputValue = input.text.toString()
+
+        when (id) {
+            R.id.form_autocomplete_status -> {
+                value = statusViewModel.getStatusByName(inputValue)?.id ?: 0L
             }
-            Utils.TEXT_INPUT_EDIT_TEXT -> {
-                val input = findViewById<TextInputEditText>(id)
-                value = input.text.toString()
+            R.id.form_autocomplete_agent -> {
+                value = agentViewModel.getAgentByName(inputValue)?.id ?: 0L
+            }
+            R.id.form_autocomplete_type -> {
+                value = typeViewModel.getTypeByName(inputValue)?.id ?: 0L
             }
         }
 
@@ -268,11 +256,11 @@ class EstateFormActivity : AppCompatActivity() {
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_country, null)
 
         when {
-            estate.status.isEmpty() -> {
+            estate.statusId == 0L-> {
                 setError(Utils.AUTOCOMPLETE_TEXT_VIEW, R.id.form_autocomplete_status, getString(R.string.form_error))
                 return false
             }
-            estate.agent.isEmpty() -> {
+            estate.agentId == 0L -> {
                 setError(Utils.AUTOCOMPLETE_TEXT_VIEW, R.id.form_autocomplete_agent, getString(R.string.form_error))
                 return false
             }
@@ -280,7 +268,7 @@ class EstateFormActivity : AppCompatActivity() {
                 setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_insert_date, getString(R.string.form_error))
                 return false
             }
-            estate.type.isEmpty() -> {
+            estate.typeId == 0L -> {
                 setError(Utils.AUTOCOMPLETE_TEXT_VIEW, R.id.form_autocomplete_type, getString(R.string.form_error))
                 return false
             }
@@ -310,7 +298,7 @@ class EstateFormActivity : AppCompatActivity() {
     /**
      * Set error to input
      */
-    private fun setError(inputType: String, id: Int, error: String?): Unit {
+    private fun setError(inputType: String, id: Int, error: String?) {
         when (inputType) {
             Utils.AUTOCOMPLETE_TEXT_VIEW -> {
                 val input = findViewById<AutoCompleteTextView>(id)

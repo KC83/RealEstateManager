@@ -8,24 +8,30 @@
 
     <Button
         android:id="@+id/image_btn_camera"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="110dp"
         android:layout_margin="20dp"
         android:drawableTop="@drawable/ic_add_photo"
-        android:text="Prendre une photo"
+        android:text="@string/camera_image"
+        android:backgroundTint="@color/colorSecondary"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="lollipop" />
 
     <Button
         android:id="@+id/image_btn_gallery"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="160dp"
+        android:layout_height="110dp"
         android:layout_margin="20dp"
         android:drawableTop="@drawable/ic_add_photo"
-        android:text="Ouvrir la galerie"
+        android:text="@string/gallery_image"
+        android:backgroundTint="@color/colorSecondary"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="lollipop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

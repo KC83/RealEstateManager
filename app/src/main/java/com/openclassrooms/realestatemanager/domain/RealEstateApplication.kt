@@ -31,6 +31,6 @@ class RealEstateApplication : Application() {
         TypeRepository(database.typeDao())
     }
     val estateImageRepository by lazy {
-        EstateImageRepository(database.estateImageDao(), null)
+        EstateImageRepository(database.estateImageDao())
     }
 }

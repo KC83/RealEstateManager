@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.*
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
@@ -9,7 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EstateImageViewModel(private val repository: EstateImageRepository): ViewModel() {
-    val allEstateImageForAEstate: LiveData<List<EstateImage>> = repository.allEstateImageForAEstate.asLiveData()
+    fun getImagesForAEstate(estateId: Long): LiveData<List<EstateImage>> {
+        return repository.getImagesForAEstate(estateId).asLiveData()
+    }
 
     fun insert(estateImage: EstateImage) = viewModelScope.launch(Dispatchers.Default) {
         repository.insert(estateImage)

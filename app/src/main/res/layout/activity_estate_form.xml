@@ -17,26 +17,24 @@
             android:id="@+id/form_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingBottom="20dp"
             android:text="@string/form_title"
             android:textSize="45sp"
             android:textStyle="bold"
-            android:paddingTop="10dp"
-            android:paddingBottom="20dp"
             app:drawableBottomCompat="@drawable/divider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- ################################################# -->
 
         <!-- Images -->
-        <ImageView
-            android:id="@+id/form_image_view_image"
-            android:layout_width="0dp"
-            android:layout_height="170dp"
-            android:background="#D1D1D1"
-            android:contentDescription="@string/estate_image"
-            android:scaleType="fitXY"
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/form_image_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/colorSecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/form_title" />
@@ -55,7 +53,7 @@
             android:paddingBottom="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/form_image_view_image">
+            app:layout_constraintTop_toBottomOf="@id/form_image_view_pager">
 
             <AutoCompleteTextView
                 android:id="@+id/form_autocomplete_status"

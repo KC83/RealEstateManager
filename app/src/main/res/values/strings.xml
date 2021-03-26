@@ -35,5 +35,7 @@
     <string name="error_happened">Une erreur s\'est produite</string>
     <string name="error_input">Vous devez remplir tous les champs pour enregistrer ce bien.</string>
     <string name="error_image">Vous devez ajouter une image pour enregistrer ce bien.</string>
+    <string name="camera_image">Prendre une photo</string>
+    <string name="gallery_image">Ouvrir la galerie</string>
 
 </resources>

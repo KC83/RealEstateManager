@@ -2,6 +2,7 @@ package com.openclassrooms.realestatemanager.ui.list
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.activity.viewModels
@@ -73,16 +74,21 @@ class EstateListActivity : AppCompatActivity() {
 
         if (requestCode == Utils.FORM_ACTIVITY_REQUEST && resultCode == Activity.RESULT_OK) {
             val estate: Estate = data?.getSerializableExtra(Utils.EXTRA_ESTATE) as Estate
-
             estateViewModel.estateId.observe(this, { estateId ->
-                val uri: String = data.getStringExtra(Utils.EXTRA_ESTATE_IMAGE) as String
-                estateImageViewModel.insert(EstateImage(estateId = estateId, uri = uri))
+                val images: MutableList<EstateImage> = data.getSerializableExtra(Utils.EXTRA_ESTATE_IMAGE) as MutableList<EstateImage>
+                var idx = 0
+                images.forEach { image ->
+                    if(idx > 0) {
+                        estateImageViewModel.insert(EstateImage(estateId = estateId, uri = image.uri, name = image.name))
+                    }
+                    idx++
+                }
             })
             estateViewModel.insert(estate)
         }
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView, estates: List<Estate>) {
-        recyclerView.adapter = EstateListAdapter(this, estates, twoPane, typeViewModel)
+        recyclerView.adapter = EstateListAdapter(this, estates, twoPane, estateImageViewModel, typeViewModel)
     }
 }

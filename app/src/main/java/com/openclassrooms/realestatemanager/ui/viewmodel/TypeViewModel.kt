@@ -20,10 +20,6 @@ class TypeViewModel(private val repository: TypeRepository): ViewModel() {
     fun getTypeByName(name: String): Type? {
         return allTypes.value?.firstOrNull { obj -> obj.name == name }
     }
-
-    fun getType(id: Long): Type? {
-        return allTypes.value?.firstOrNull { obj -> obj.id == id }
-    }
 }
 class TypeViewModelFactory(private val repository: TypeRepository): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

@@ -1,21 +1,27 @@
 package com.openclassrooms.realestatemanager.ui.list
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.Estate
+import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.dummy.DummyContent
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailActivity
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
+import com.openclassrooms.realestatemanager.ui.viewmodel.EstateImageViewModel
 import com.openclassrooms.realestatemanager.ui.viewmodel.TypeViewModel
+import com.openclassrooms.realestatemanager.utils.DropdownItem
 import kotlin.math.roundToInt
 
-class EstateListAdapter(private val parentActivity: EstateListActivity, private val values: List<Estate>, private val twoPane: Boolean, private val typeViewModel: TypeViewModel) :
+class EstateListAdapter(private val parentActivity: EstateListActivity, private val values: List<Estate>, private val twoPane: Boolean, private val estateImageViewModel: EstateImageViewModel, private val typeViewModel: TypeViewModel) :
     RecyclerView.Adapter<EstateListAdapter.ViewHolder>() {
         private val onClickListener: View.OnClickListener
 
@@ -49,7 +55,23 @@ class EstateListAdapter(private val parentActivity: EstateListActivity, private 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = values[position]
 
-            holder.nameView.text = item.type
+            // Get the first image saved
+            estateImageViewModel.getImagesForAEstate(item.id).observe(parentActivity, { allImages ->
+                if (allImages.isNotEmpty()) {
+                    val uri: Uri = Uri.parse(allImages[0].uri)
+                    holder.imageView.setImageURI(uri)
+                }
+            })
+
+            // Get the type
+            typeViewModel.allTypes.observe(parentActivity, { allTypes ->
+                allTypes.forEach { type ->
+                    if (type.id == item.typeId) {
+                        holder.nameView.text = type.name
+                    }
+                }
+            })
+
             holder.cityView.text = item.city
             holder.priceView.text = String.format("$%.2f", item.price)
 
@@ -64,6 +86,7 @@ class EstateListAdapter(private val parentActivity: EstateListActivity, private 
         }
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val imageView: ImageView = view.findViewById(R.id.item_image)
             val nameView: TextView = view.findViewById(R.id.item_name)
             val cityView: TextView = view.findViewById(R.id.item_city)
             val priceView: TextView = view.findViewById(R.id.item_price)

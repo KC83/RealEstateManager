@@ -8,9 +8,9 @@ import java.io.Serializable
 @Entity(tableName = "estate")
 data class Estate(
         @PrimaryKey(autoGenerate = true) val id: Long = 0,
-        @ColumnInfo(name = "status") val status: String,
-        @ColumnInfo(name = "type") val type: String,
-        @ColumnInfo(name = "agent") val agent: String,
+        @ColumnInfo(name = "status_id") val statusId: Long,
+        @ColumnInfo(name = "type_id") val typeId: Long,
+        @ColumnInfo(name = "agent_id") val agentId: Long,
         @ColumnInfo(name = "insert_date") val insertDate: String,
         @ColumnInfo(name = "sale_date") val saleDate: String,
         @ColumnInfo(name = "price") val price: Float,
