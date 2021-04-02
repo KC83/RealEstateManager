@@ -1,11 +1,8 @@
 package com.openclassrooms.realestatemanager.ui.viewmodel
 
-import android.net.Uri
 import androidx.lifecycle.*
-import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.domain.repository.EstateImageRepository
-import com.openclassrooms.realestatemanager.domain.repository.EstateRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

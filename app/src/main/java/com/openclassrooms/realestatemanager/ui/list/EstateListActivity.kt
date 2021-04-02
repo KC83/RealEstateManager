@@ -14,6 +14,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.RealEstateRoomDatabase
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
+import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
@@ -30,6 +31,9 @@ class EstateListActivity : AppCompatActivity() {
     }
     private val estateImageViewModel: EstateImageViewModel by viewModels {
         EstateImageViewModelFactory((application as RealEstateApplication).estateImageRepository)
+    }
+    private val estatePlaceViewModel: EstatePlaceViewModel by viewModels {
+        EstatePlaceViewModelFactory((application as RealEstateApplication).estatePlaceRepository)
     }
     private val typeViewModel: TypeViewModel by viewModels {
         TypeViewModelFactory((application as RealEstateApplication).typeRepository)
@@ -75,6 +79,7 @@ class EstateListActivity : AppCompatActivity() {
         if (requestCode == Utils.FORM_ACTIVITY_REQUEST && resultCode == Activity.RESULT_OK) {
             val estate: Estate = data?.getSerializableExtra(Utils.EXTRA_ESTATE) as Estate
             estateViewModel.estateId.observe(this, { estateId ->
+                // Images
                 val images: MutableList<EstateImage> = data.getSerializableExtra(Utils.EXTRA_ESTATE_IMAGE) as MutableList<EstateImage>
                 var idx = 0
                 images.forEach { image ->
@@ -82,6 +87,12 @@ class EstateListActivity : AppCompatActivity() {
                         estateImageViewModel.insert(EstateImage(estateId = estateId, uri = image.uri, name = image.name))
                     }
                     idx++
+                }
+
+                // Places
+                val placeIds: MutableList<Int> = data.getSerializableExtra(Utils.EXTRA_ESTATE_PLACE) as MutableList<Int>
+                placeIds.forEach { placeId ->
+                    estatePlaceViewModel.insert(EstatePlace(estateId = estateId, placeId = placeId.toLong()))
                 }
             })
             estateViewModel.insert(estate)

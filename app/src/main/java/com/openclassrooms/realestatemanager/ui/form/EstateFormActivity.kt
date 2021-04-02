@@ -5,16 +5,23 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.android.material.slider.Slider
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputEditText
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.*
@@ -25,10 +32,13 @@ import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.log
 import kotlin.math.roundToInt
+
 
 class EstateFormActivity : AppCompatActivity() {
     private val images: MutableList<EstateImage> = mutableListOf()
+
     private val statusViewModel: StatusViewModel by viewModels {
         StatusViewModelFactory((application as RealEstateApplication).statusRepository)
     }
@@ -37,6 +47,9 @@ class EstateFormActivity : AppCompatActivity() {
     }
     private val typeViewModel: TypeViewModel by viewModels {
         TypeViewModelFactory((application as RealEstateApplication).typeRepository)
+    }
+    private val placeViewModel: PlaceViewModel by viewModels {
+        PlaceViewModelFactory((application as RealEstateApplication).placeRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +72,18 @@ class EstateFormActivity : AppCompatActivity() {
         // Set datePicker for the sale date
         setDate(R.id.form_text_input_edit_sale_date)
 
+        // Set images
         setImageRecyclerView(View(this))
+
+        // Get chipGroup
+        val chipGroup: ChipGroup = findViewById<ChipGroup>(R.id.form_chip_group)
+        // Set chips for the points of interest
+        placeViewModel.allPlaces.observe(this, { allPlaces ->
+            Log.d("TEST PLACES", "OK TEST PLACES")
+            allPlaces.forEach { place ->
+                addChip(this, chipGroup, place)
+            }
+        })
 
         val btnSave = findViewById<Button>(R.id.form_btn_save)
         btnSave.setOnClickListener {
@@ -88,13 +112,14 @@ class EstateFormActivity : AppCompatActivity() {
                     val replyIntent= Intent()
                     replyIntent.putExtra(Utils.EXTRA_ESTATE, estate as Serializable)
                     replyIntent.putExtra(Utils.EXTRA_ESTATE_IMAGE, images as Serializable)
-                    setResult(Activity.RESULT_OK,replyIntent)
+                    replyIntent.putExtra(Utils.EXTRA_ESTATE_PLACE, chipGroup.checkedChipIds as Serializable)
+                    setResult(Activity.RESULT_OK, replyIntent)
                     finish()
                 } else {
-                    Toast.makeText(this, getString(R.string.error_image),Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.error_image), Toast.LENGTH_LONG).show()
                 }
             } else {
-                Toast.makeText(this, getString(R.string.error_input),Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.error_input), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -108,7 +133,6 @@ class EstateFormActivity : AppCompatActivity() {
         val dropdown = findViewById<AutoCompleteTextView>(id)
         dropdown.setAdapter(adapter)
     }
-
     /**
      * Get the dropdown items
      */
@@ -139,7 +163,6 @@ class EstateFormActivity : AppCompatActivity() {
         }
         return list
     }
-
     /**
      * Setup date input
      */
@@ -152,27 +175,31 @@ class EstateFormActivity : AppCompatActivity() {
                 MotionEvent.ACTION_DOWN -> {
                     val calendar: Calendar = Calendar.getInstance()
 
-                    val day: Int = calendar.get(Calendar.DAY_OF_MONTH)
-                    val month: Int = calendar.get(Calendar.MONTH)
-                    val year: Int = calendar.get(Calendar.YEAR)
+                    var selectedDay: Int = calendar.get(Calendar.DAY_OF_MONTH)
+                    var selectedMonth: Int = calendar.get(Calendar.MONTH)
+                    var selectedYear: Int = calendar.get(Calendar.YEAR)
 
-                    val datePickerDialog = DatePickerDialog(this@EstateFormActivity, { view, year, monthOfYear, dayOfMonth ->
-                        print(monthOfYear)
+                    val date = getStringValue(id)
+                    if (date.isNotEmpty()) {
+                        selectedDay = date.substring(0,2).toInt()
+                        selectedMonth = date.substring(3,5).toInt()
+                        selectedYear = date.substring(6,10).toInt()
+                    }
 
+                    val datePickerDialog = DatePickerDialog(this@EstateFormActivity, { _, year, monthOfYear, dayOfMonth ->
                         var goodDay: String = dayOfMonth.toString()
                         if (dayOfMonth < 10) {
-                            goodDay = "0" + goodDay
+                            goodDay = "0$goodDay"
                         }
 
-                        val goodMonth: Int = monthOfYear+1
+                        val goodMonth: Int = monthOfYear + 1
                         var goodMonthStr: String = goodMonth.toString()
                         if (monthOfYear < 10) {
-                            goodMonthStr = "0" + goodMonthStr
+                            goodMonthStr = "0$goodMonthStr"
                         }
 
-                        val date: String = String.format("%s/%s/%s", goodDay, goodMonthStr, year)
-                        dateInputEditText.setText(date)
-                    }, year, month, day)
+                        dateInputEditText.setText(String.format("%s/%s/%s", goodDay, goodMonthStr, year))
+                    }, selectedYear, selectedMonth, selectedDay)
                     datePickerDialog.show()
                 }
             }
@@ -180,13 +207,47 @@ class EstateFormActivity : AppCompatActivity() {
             v?.onTouchEvent(event) ?: true
         }
     }
-
+    /**
+     * Setup image recycler view
+     */
     private fun setImageRecyclerView(view: View) {
-        val pager = this.findViewById<ViewPager>(R.id.form_image_view_pager)
         images.add(EstateImage(estateId = 0, uri = Utils.getUriAddImage(this).toString(), name = ""))
+
+        val pager = this.findViewById<ViewPager>(R.id.form_image_view_pager)
         val imageViewPagerAdapter = ImageViewPagerAdapter(this, images, this, view, pager)
 
         pager.adapter = imageViewPagerAdapter
+
+        val tabLayout = this.findViewById<TabLayout>(R.id.form_tab_layout)
+        tabLayout.setupWithViewPager(pager, true)
+    }
+    /**
+     * Add programmatically chip
+     */
+    private fun addChip(context: Context, chipGroup: ChipGroup, place: Place) {
+        val chip = Chip(context)
+        chip.id = place.id.toInt()
+        chip.text = place.name
+        if (place.logo != 0) {
+            chip.chipIcon = ContextCompat.getDrawable(context, place.logo)
+        }
+        chip.isClickable = true
+        chip.isCheckable = true
+        chip.isCheckedIconVisible = true
+        chip.isFocusable = true
+        chip.isCheckedIconVisible = false
+        chip.chipBackgroundColor = ColorStateList.valueOf(Color.LTGRAY)
+
+        chip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorSecondary))
+                chip.isCloseIconVisible = true
+            } else {
+                chip.chipBackgroundColor = ColorStateList.valueOf(Color.LTGRAY)
+                chip.isCloseIconVisible = false
+            }
+        }
+        chipGroup.addView(chip)
     }
 
     //### GET VALUES ###

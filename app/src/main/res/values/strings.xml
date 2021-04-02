@@ -37,5 +37,6 @@
     <string name="error_image">Vous devez ajouter une image pour enregistrer ce bien.</string>
     <string name="camera_image">Prendre une photo</string>
     <string name="gallery_image">Ouvrir la galerie</string>
+    <string name="points_of_interest">Points d\'intérêts à proximité</string>
 
 </resources>

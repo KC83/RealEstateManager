@@ -12,7 +12,7 @@
         android:padding="20dp"
         tools:context=".ui.form.EstateFormActivity">
 
-        <!-- TITLE -->
+        <!-- Title -->
         <TextView
             android:id="@+id/form_title"
             android:layout_width="match_parent"
@@ -34,10 +34,20 @@
             android:id="@+id/form_image_view_pager"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@color/colorSecondary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/form_title" />
+            app:layout_constraintTop_toBottomOf="@+id/form_title"/>
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/form_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/form_image_view_pager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@android:color/transparent"
+            app:tabBackground="@drawable/tab_selector"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp" />
 
         <!-- ################################################# -->
 
@@ -354,6 +364,29 @@
 
         <!-- ################################################# -->
 
+        <!-- Title Chips Group -->
+        <TextView
+            android:id="@+id/form_title_chip_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/points_of_interest"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/form_text_input_country" />
+
+        <!-- Chips Group -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/form_chip_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.ChipGroup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/form_title_chip_group">
+        </com.google.android.material.chip.ChipGroup>
+
         <Button
             android:id="@+id/form_btn_save"
             android:layout_width="wrap_content"
@@ -363,7 +396,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/form_text_input_country" />
+            app:layout_constraintTop_toBottomOf="@+id/form_chip_group" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

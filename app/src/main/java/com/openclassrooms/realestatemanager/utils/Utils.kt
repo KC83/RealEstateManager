@@ -33,6 +33,7 @@ class Utils {
          */
         const val EXTRA_ESTATE = "EXTRA_ESTATE"
         const val EXTRA_ESTATE_IMAGE = "EXTRA_ESTATE_IMAGE"
+        const val EXTRA_ESTATE_PLACE = "EXTRA_ESTATE_PLACE"
 
         /**
          * FORM CONSTANTS

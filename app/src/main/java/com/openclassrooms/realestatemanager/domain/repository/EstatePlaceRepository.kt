@@ -2,11 +2,14 @@ package com.openclassrooms.realestatemanager.domain.repository
 
 import androidx.annotation.WorkerThread
 import com.openclassrooms.realestatemanager.data.dao.EstatePlaceDao
+import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import kotlinx.coroutines.flow.Flow
 
 class EstatePlaceRepository(private val estatePlaceDao: EstatePlaceDao, private val estateId: Int?) {
-    val allEstatePlaceForAEstate: Flow<List<EstatePlace>> = estatePlaceDao.getPlacesForAEstate(estateId)
+    fun getPlacesForAEstate(estateId: Long): Flow<List<EstatePlace>> {
+        return estatePlaceDao.getPlacesForAEstate(estateId)
+    }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

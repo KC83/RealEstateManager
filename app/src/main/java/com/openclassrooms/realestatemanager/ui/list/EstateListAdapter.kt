@@ -8,46 +8,39 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.Estate
-import com.openclassrooms.realestatemanager.data.model.EstateImage
-import com.openclassrooms.realestatemanager.dummy.DummyContent
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailActivity
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
 import com.openclassrooms.realestatemanager.ui.viewmodel.EstateImageViewModel
 import com.openclassrooms.realestatemanager.ui.viewmodel.TypeViewModel
-import com.openclassrooms.realestatemanager.utils.DropdownItem
-import kotlin.math.roundToInt
+import com.openclassrooms.realestatemanager.utils.Utils
+import java.io.Serializable
 
 class EstateListAdapter(private val parentActivity: EstateListActivity, private val values: List<Estate>, private val twoPane: Boolean, private val estateImageViewModel: EstateImageViewModel, private val typeViewModel: TypeViewModel) :
     RecyclerView.Adapter<EstateListAdapter.ViewHolder>() {
-        private val onClickListener: View.OnClickListener
-
-        init {
-            onClickListener = View.OnClickListener { v ->
-                val item = v.tag as Estate
-                if (twoPane) {
-                    val fragment = EstateDetailFragment().apply {
-                        arguments = Bundle().apply {
-                            putString(EstateDetailFragment.ARG_ITEM_ID, item.id.toString())
-                        }
+        private val onClickListener: View.OnClickListener = View.OnClickListener { v ->
+            val item = v.tag as Estate
+            if (twoPane) {
+                val fragment = EstateDetailFragment().apply {
+                    arguments = Bundle().apply {
+                        putSerializable(Utils.EXTRA_ESTATE, item as Serializable)
                     }
-                    parentActivity.supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.estate_detail_container, fragment)
-                            .commit()
-                } else {
-                    val intent = Intent(v.context, EstateDetailActivity::class.java).apply {
-                        putExtra(EstateDetailFragment.ARG_ITEM_ID, item.id.toString())
-                    }
-                    v.context.startActivity(intent)
                 }
+                parentActivity.supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.estate_detail_container, fragment)
+                        .commit()
+            } else {
+                val intent = Intent(v.context, EstateDetailActivity::class.java).apply {
+                    putExtra(Utils.EXTRA_ESTATE, item as Serializable)
+                }
+                v.context.startActivity(intent)
             }
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.estate_list_content, parent, false)
             return ViewHolder(view)
         }

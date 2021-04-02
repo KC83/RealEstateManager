@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.dao.*
 import com.openclassrooms.realestatemanager.data.model.*
 import kotlinx.coroutines.CoroutineScope
@@ -61,16 +62,16 @@ abstract class RealEstateRoomDatabase : RoomDatabase() {
                     typeDao.insert(Type(id = 5, name = "Terrain"))
 
                     val placeDao = database.placeDao()
-                    placeDao.insert(Place(id = 1, name = "Supermarchés",logo = ""))
-                    placeDao.insert(Place(id = 2, name = "Restaurants",logo = ""))
-                    placeDao.insert(Place(id = 3, name = "Hôtels",logo = ""))
-                    placeDao.insert(Place(id = 4, name = "Banques",logo = ""))
-                    placeDao.insert(Place(id = 5, name = "Écoles",logo = ""))
-                    placeDao.insert(Place(id = 6, name = "Pharmacies",logo = ""))
-                    placeDao.insert(Place(id = 7, name = "Stationnements",logo = ""))
-                    placeDao.insert(Place(id = 8, name = "Hôpitaux",logo = ""))
-                    placeDao.insert(Place(id = 9, name = "Bureaux de poste",logo = ""))
-                    placeDao.insert(Place(id = 10, name = "Stations-service",logo = ""))
+                    placeDao.insert(Place(id = 1, name = "Supermarchés",logo = R.drawable.ic_supermarket))
+                    placeDao.insert(Place(id = 2, name = "Restaurants",logo = R.drawable.ic_dining_room))
+                    placeDao.insert(Place(id = 3, name = "Poste de police",logo = R.drawable.ic_police_station))
+                    placeDao.insert(Place(id = 4, name = "Banques",logo = R.drawable.ic_bank))
+                    placeDao.insert(Place(id = 5, name = "Ecoles",logo = R.drawable.ic_school))
+                    placeDao.insert(Place(id = 6, name = "Stations-service",logo = R.drawable.ic_fuel_pump))
+                    placeDao.insert(Place(id = 7, name = "Stationnements",logo = R.drawable.ic_parking_meter))
+                    placeDao.insert(Place(id = 8, name = "Hôpitaux",logo = R.drawable.ic_hospital))
+                    placeDao.insert(Place(id = 9, name = "Musée",logo = R.drawable.ic_museum))
+                    placeDao.insert(Place(id = 10, name = "Cinéma",logo = R.drawable.ic_cinema))
                 }
             }
         }

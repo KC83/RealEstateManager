@@ -46,7 +46,7 @@ class ImageViewPagerAdapter(var context: Context, var images: MutableList<Estate
         if (position == 0) {
             imageView.scaleType = ImageView.ScaleType.CENTER
         } else {
-            imageView.scaleType = ImageView.ScaleType.CENTER_CROP
+            imageView.scaleType = ImageView.ScaleType.FIT_XY
         }
 
         imageView.setOnClickListener { v ->
