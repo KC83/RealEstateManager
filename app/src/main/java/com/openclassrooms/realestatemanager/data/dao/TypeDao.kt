@@ -13,6 +13,9 @@ interface TypeDao {
     @Query("SELECT * FROM type ORDER BY name")
     fun getTypes(): Flow<List<Type>>
 
+    @Query("SELECT * FROM type WHERE type.id = :id")
+    suspend fun getTypeById(id: Long): Type
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(type: Type)
 }

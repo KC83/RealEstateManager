@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EstateImageDao {
     @Query("SELECT * FROM estate_image WHERE estate_id = :estateId ORDER BY id")
-    fun getImagesForAEstate(estateId: Long?): Flow<List<EstateImage>>
+    suspend fun getImagesForAEstate(estateId: Long?): List<EstateImage>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(estateImage: EstateImage)
 
     @Delete

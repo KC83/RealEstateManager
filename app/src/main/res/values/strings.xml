@@ -8,6 +8,8 @@
     <string name="surface_image">surface_image</string>
     <string name="estate_image">estate_image</string>
 
+    <string name="button_estate_form">Ajout/modification d\'un bien</string>
+
     <string name="title_item_list">Items</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="title_estate_list">Estates</string>

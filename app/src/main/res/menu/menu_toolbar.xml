@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_add_estate"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/app_name"
+        android:icon="@drawable/ic_pencil"
+        android:title="@string/button_estate_form"
         app:showAsAction="ifRoom" />
 </menu>

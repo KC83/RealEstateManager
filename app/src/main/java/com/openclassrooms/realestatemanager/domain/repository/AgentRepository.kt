@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 class AgentRepository(private val agentDao: AgentDao) {
     val allAgents: Flow<List<Agent>> = agentDao.getAgents()
 
+    suspend fun getAgentById(id: Long) = agentDao.getAgentById(id)
+
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insert(agent: Agent) {

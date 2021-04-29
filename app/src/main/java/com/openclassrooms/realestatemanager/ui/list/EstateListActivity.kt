@@ -14,6 +14,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.RealEstateRoomDatabase
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
+import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
@@ -22,21 +23,20 @@ import com.openclassrooms.realestatemanager.utils.Utils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.*
 
 class EstateListActivity : AppCompatActivity() {
     private var twoPane: Boolean = false
 
     private val estateViewModel: EstateViewModel by viewModels {
-        EstateViewModelFactory((application as RealEstateApplication).estateRepository)
+        val app = application as RealEstateApplication
+        EstateViewModelFactory(app.estateRepository)
     }
     private val estateImageViewModel: EstateImageViewModel by viewModels {
         EstateImageViewModelFactory((application as RealEstateApplication).estateImageRepository)
     }
     private val estatePlaceViewModel: EstatePlaceViewModel by viewModels {
         EstatePlaceViewModelFactory((application as RealEstateApplication).estatePlaceRepository)
-    }
-    private val typeViewModel: TypeViewModel by viewModels {
-        TypeViewModelFactory((application as RealEstateApplication).typeRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,8 +52,8 @@ class EstateListActivity : AppCompatActivity() {
             twoPane = true
         }
 
-        estateViewModel.allEstates.observe(this, { estates ->
-            setupRecyclerView(findViewById(R.id.estate_list), estates)
+        estateViewModel.allEstates.observe(this, { estatesModel ->
+            setupRecyclerView(findViewById(R.id.estate_list), estatesModel)
         })
     }
 
@@ -90,16 +90,20 @@ class EstateListActivity : AppCompatActivity() {
                 }
 
                 // Places
-                val placeIds: MutableList<Int> = data.getSerializableExtra(Utils.EXTRA_ESTATE_PLACE) as MutableList<Int>
+                val placeIds: MutableList<Int> = data.getSerializableExtra(Utils.EXTRA_PLACE) as MutableList<Int>
                 placeIds.forEach { placeId ->
                     estatePlaceViewModel.insert(EstatePlace(estateId = estateId, placeId = placeId.toLong()))
                 }
+
+                estateViewModel.allEstates.observe(this, { estatesModel ->
+                    setupRecyclerView(findViewById(R.id.estate_list), estatesModel)
+                })
             })
             estateViewModel.insert(estate)
         }
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView, estates: List<Estate>) {
-        recyclerView.adapter = EstateListAdapter(this, estates, twoPane, estateImageViewModel, typeViewModel)
+    private fun setupRecyclerView(recyclerView: RecyclerView, estates: List<EstateModel>) {
+        recyclerView.adapter = EstateListAdapter(this, estates, twoPane)
     }
 }

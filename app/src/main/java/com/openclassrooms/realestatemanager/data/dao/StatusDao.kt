@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.data.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,7 +11,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StatusDao {
     @Query("SELECT * FROM status ORDER BY name")
-    fun getStatus(): Flow<List<Status>>
+    fun getStatus(): LiveData<List<Status>>
+
+    @Query("SELECT * FROM status WHERE status.id = :id")
+    suspend fun getStatusById(id: Long): Status
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(status: Status)

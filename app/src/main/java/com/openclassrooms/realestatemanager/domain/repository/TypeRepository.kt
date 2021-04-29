@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.Flow
 class TypeRepository(private val typeDao: TypeDao) {
     val allTypes: Flow<List<Type>> = typeDao.getTypes()
 
+    suspend fun getTypeById(id: Long) = typeDao.getTypeById(id)
+
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insert(type: Type) {

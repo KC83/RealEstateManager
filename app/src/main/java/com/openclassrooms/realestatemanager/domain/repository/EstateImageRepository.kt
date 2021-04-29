@@ -6,9 +6,8 @@ import com.openclassrooms.realestatemanager.data.model.EstateImage
 import kotlinx.coroutines.flow.Flow
 
 class EstateImageRepository(private val estateImageDao: EstateImageDao) {
-    fun getImagesForAEstate(estateId: Long): Flow<List<EstateImage>> {
-        return estateImageDao.getImagesForAEstate(estateId)
-    }
+    suspend fun getImagesForAEstate(estateId: Long): List<EstateImage> = estateImageDao.getImagesForAEstate(estateId)
+
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

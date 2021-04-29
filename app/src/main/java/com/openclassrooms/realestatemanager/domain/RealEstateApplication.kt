@@ -19,7 +19,7 @@ class RealEstateApplication : Application() {
         EstatePlaceRepository(database.estatePlaceDao(), null)
     }
     val estateRepository by lazy {
-        EstateRepository(database.estateDao())
+        EstateRepository(database.estateDao(), database.typeDao(), database.statusDao(), database.agentDao(), database.estateImageDao(), database.estatePlaceDao())
     }
     val placeRepository by lazy {
         PlaceRepository(database.placeDao())

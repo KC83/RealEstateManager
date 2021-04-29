@@ -12,6 +12,9 @@ interface AgentDao {
     @Query("SELECT * FROM agent ORDER BY full_name")
     fun getAgents(): Flow<List<Agent>>
 
+    @Query("SELECT * FROM agent WHERE agent.id = :id")
+    suspend fun getAgentById(id: Long): Agent
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(agent: Agent)
 }

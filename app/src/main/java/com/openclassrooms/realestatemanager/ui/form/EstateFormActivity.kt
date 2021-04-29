@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
 import android.text.InputType
 import android.util.Log
 import android.view.MotionEvent
@@ -15,6 +16,7 @@ import android.view.View
 import android.widget.*
 import androidx.activity.viewModels
 import androidx.annotation.IdRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
@@ -35,8 +37,9 @@ import kotlin.collections.ArrayList
 import kotlin.math.log
 import kotlin.math.roundToInt
 
-
 class EstateFormActivity : AppCompatActivity() {
+    private val estateImages: MutableList<EstateImage> = mutableListOf()
+    // Images already saved, use to know if a image is deleted
     private val images: MutableList<EstateImage> = mutableListOf()
 
     private val statusViewModel: StatusViewModel by viewModels {
@@ -55,6 +58,8 @@ class EstateFormActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estate_form)
+
+        val estateModel = intent.getSerializableExtra(Utils.EXTRA_ESTATE_MODEL) as EstateModel?
 
         // Set dropdown
         setDropdown(this, R.id.form_autocomplete_status, getListDropdownItem(Utils.DROPDOWN_STATUS))
@@ -76,18 +81,33 @@ class EstateFormActivity : AppCompatActivity() {
         setImageRecyclerView(View(this))
 
         // Get chipGroup
-        val chipGroup: ChipGroup = findViewById<ChipGroup>(R.id.form_chip_group)
+        val chipGroup: ChipGroup = findViewById(R.id.form_chip_group)
         // Set chips for the points of interest
         placeViewModel.allPlaces.observe(this, { allPlaces ->
-            Log.d("TEST PLACES", "OK TEST PLACES")
             allPlaces.forEach { place ->
-                addChip(this, chipGroup, place)
+                var isChecked = false
+                if (estateModel != null) {
+                    if (estateModel.estatePlaces.isNotEmpty()) {
+                        estateModel.estatePlaces.forEach { estatePlace ->
+                            if (estatePlace.placeId == place.id) {
+                                isChecked = true
+                            }
+                        }
+                    }
+                }
+
+                Utils.addChip(this, chipGroup, place, false, isChecked)
             }
         })
+
+        if (estateModel != null) {
+            setValues(estateModel)
+        }
 
         val btnSave = findViewById<Button>(R.id.form_btn_save)
         btnSave.setOnClickListener {
             val estate = Estate(
+                    id = estateModel?.estate?.id ?: 0L,
                     statusId = getLongValue(R.id.form_autocomplete_status),
                     typeId = getLongValue(R.id.form_autocomplete_type),
                     agentId = getLongValue(R.id.form_autocomplete_agent),
@@ -108,11 +128,15 @@ class EstateFormActivity : AppCompatActivity() {
             // Check if inputs are not empty
             if (checkInput(estate)) {
                 // Check if image is not empty
-                if (images.size > 1) {
+                if (estateImages.size > 1) {
                     val replyIntent= Intent()
                     replyIntent.putExtra(Utils.EXTRA_ESTATE, estate as Serializable)
-                    replyIntent.putExtra(Utils.EXTRA_ESTATE_IMAGE, images as Serializable)
-                    replyIntent.putExtra(Utils.EXTRA_ESTATE_PLACE, chipGroup.checkedChipIds as Serializable)
+                    replyIntent.putExtra(Utils.EXTRA_ESTATE_IMAGE, estateImages as Serializable)
+                    replyIntent.putExtra(Utils.EXTRA_IMAGE, images as Serializable)
+                    replyIntent.putExtra(Utils.EXTRA_PLACE, chipGroup.checkedChipIds as Serializable)
+                    if (estateModel != null) {
+                        replyIntent.putExtra(Utils.EXTRA_ESTATE_PLACE, estateModel.estatePlaces as Serializable)
+                    }
                     setResult(Activity.RESULT_OK, replyIntent)
                     finish()
                 } else {
@@ -182,7 +206,7 @@ class EstateFormActivity : AppCompatActivity() {
                     val date = getStringValue(id)
                     if (date.isNotEmpty()) {
                         selectedDay = date.substring(0,2).toInt()
-                        selectedMonth = date.substring(3,5).toInt()
+                        selectedMonth = date.substring(3,5).toInt()-1
                         selectedYear = date.substring(6,10).toInt()
                     }
 
@@ -211,43 +235,88 @@ class EstateFormActivity : AppCompatActivity() {
      * Setup image recycler view
      */
     private fun setImageRecyclerView(view: View) {
-        images.add(EstateImage(estateId = 0, uri = Utils.getUriAddImage(this).toString(), name = ""))
+        if(estateImages.size == 0) {
+            estateImages.add(EstateImage(estateId = 0, uri = Utils.getUriAddImage(this).toString(), name = ""))
+        }
 
         val pager = this.findViewById<ViewPager>(R.id.form_image_view_pager)
-        val imageViewPagerAdapter = ImageViewPagerAdapter(this, images, this, view, pager)
+        val imageViewPagerAdapter = ImageViewPagerAdapter(this, estateImages, this, view, pager)
 
         pager.adapter = imageViewPagerAdapter
 
         val tabLayout = this.findViewById<TabLayout>(R.id.form_tab_layout)
         tabLayout.setupWithViewPager(pager, true)
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if (tab?.position != null) {
+                    val imageDescription: TextView = findViewById(R.id.form_image_description)
+                    val deleteImageButton: ImageButton = findViewById(R.id.form_delete_image)
+                    val editImageButton: ImageButton = findViewById(R.id.form_edit_image)
+
+                    if (estateImages[tab.position].name.isNotEmpty()) {
+                        // Image description
+                        imageDescription.text = estateImages[tab.position].name
+
+                        // Delete button
+                        deleteImageButton.visibility = View.VISIBLE
+                        deleteImageButton.setOnClickListener {
+                            deleteImage(tab.position)
+                        }
+
+                        // Edit button
+                        editImageButton.visibility = View.VISIBLE
+                        editImageButton.setOnClickListener {
+                            setAlertDialog(tab.position)
+                        }
+                    } else {
+                        imageDescription.text = ""
+                        deleteImageButton.visibility = View.INVISIBLE
+                        editImageButton.visibility = View.INVISIBLE
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
     }
     /**
-     * Add programmatically chip
+     * Set values of the estate
      */
-    private fun addChip(context: Context, chipGroup: ChipGroup, place: Place) {
-        val chip = Chip(context)
-        chip.id = place.id.toInt()
-        chip.text = place.name
-        if (place.logo != 0) {
-            chip.chipIcon = ContextCompat.getDrawable(context, place.logo)
-        }
-        chip.isClickable = true
-        chip.isCheckable = true
-        chip.isCheckedIconVisible = true
-        chip.isFocusable = true
-        chip.isCheckedIconVisible = false
-        chip.chipBackgroundColor = ColorStateList.valueOf(Color.LTGRAY)
+    private fun setValues(estateModel: EstateModel) {
+        // Autocomplete
+        findViewById<AutoCompleteTextView>(R.id.form_autocomplete_type).setText(estateModel.type.name, false)
+        findViewById<AutoCompleteTextView>(R.id.form_autocomplete_agent).setText(estateModel.agent.fullName, false)
+        findViewById<AutoCompleteTextView>(R.id.form_autocomplete_status).setText(estateModel.status.name, false)
 
-        chip.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorSecondary))
-                chip.isCloseIconVisible = true
-            } else {
-                chip.chipBackgroundColor = ColorStateList.valueOf(Color.LTGRAY)
-                chip.isCloseIconVisible = false
+        // TextInputEditText
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_insert_date).setText(estateModel.estate.insertDate)
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_sale_date).setText(estateModel.estate.saleDate)
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_surface).setText(estateModel.estate.surface.toString())
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_rooms).setText(estateModel.estate.numberRooms.toString())
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_bathrooms).setText(estateModel.estate.numberBathrooms.toString())
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_bedrooms).setText(estateModel.estate.numberBedrooms.toString())
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_description).setText(estateModel.estate.description)
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_location).setText(estateModel.estate.location)
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_zip_code).setText(estateModel.estate.zipCode)
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_city).setText(estateModel.estate.city)
+        findViewById<TextInputEditText>(R.id.form_text_input_edit_country).setText(estateModel.estate.country)
+
+        // Slider
+        findViewById<Slider>(R.id.form_slider_price).value = estateModel.estate.price
+
+        // Images
+        if (estateModel.images.size > 0) {
+            estateModel.images.forEach { image ->
+                estateImages.add(image)
+                images.add(image)
             }
+
+            val pager = this.findViewById<ViewPager>(R.id.form_image_view_pager)
+            val imageViewPagerAdapter = ImageViewPagerAdapter(this, estateImages, this, View(this), pager)
+            pager.adapter = imageViewPagerAdapter
         }
-        chipGroup.addView(chip)
     }
 
     //### GET VALUES ###
@@ -277,7 +346,7 @@ class EstateFormActivity : AppCompatActivity() {
     private fun getIntValue(@IdRes id: Int): Int {
         val input = findViewById<TextInputEditText>(id)
         val valueStr = input.text.toString()
-        if (!valueStr.isEmpty()) {
+        if (valueStr.isNotEmpty()) {
             return valueStr.toInt()
         }
         return 0
@@ -310,11 +379,15 @@ class EstateFormActivity : AppCompatActivity() {
         setError(Utils.AUTOCOMPLETE_TEXT_VIEW, R.id.form_autocomplete_type, null)
         setError(Utils.AUTOCOMPLETE_TEXT_VIEW, R.id.form_autocomplete_agent, null)
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_insert_date, null)
+        setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_sale_date, null)
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_description, null)
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_location, null)
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_zip_code, null)
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_city, null)
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_country, null)
+
+        val statusSale = statusViewModel.getStatusByName("Vendu")
+        val statusSaleId: Long = statusSale?.id ?: 0L
 
         when {
             estate.statusId == 0L-> {
@@ -353,6 +426,10 @@ class EstateFormActivity : AppCompatActivity() {
                 setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_country, getString(R.string.form_error))
                 return false
             }
+            estate.statusId == statusSaleId && estate.saleDate.isEmpty() -> {
+                setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_sale_date, getString(R.string.form_error))
+                return false
+            }
             else -> return true
         }
     }
@@ -370,5 +447,42 @@ class EstateFormActivity : AppCompatActivity() {
                 input.error = error
             }
         }
+    }
+    /**
+     * Set AlertDialog to edit description of a image
+     */
+    private fun setAlertDialog(position: Int) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Ajouter une description")
+        builder.setMessage("Merci de renseigner une description pour cette image")
+
+        val input = EditText(this)
+        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+        input.layoutParams = lp
+        input.hint = "Description"
+        input.setText(estateImages[position].name)
+        builder.setView(input)
+
+        builder.setPositiveButton("Ok",null)
+        val dialog = builder.create()
+        dialog.show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            if (input.text.isNotEmpty()) {
+                estateImages[position].name = input.text.toString()
+                setImageRecyclerView(View(this))
+
+                Toast.makeText(this, "Description enregistrée", Toast.LENGTH_LONG).show()
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, "Merci de renseigner une description", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    /**
+     * Delete image
+     */
+    private fun deleteImage(position: Int) {
+        estateImages.removeAt(position)
+        setImageRecyclerView(View(this))
     }
 }

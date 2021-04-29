@@ -11,7 +11,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -25,7 +24,7 @@ import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.utils.Utils
 
 
-class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private var contentResolver: ContentResolver, private val activity: EstateFormActivity, private val viewForm: View, private val images: MutableList<EstateImage>) : BottomSheetDialogFragment() {
+class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private var contentResolver: ContentResolver, private val estateFormActivity: EstateFormActivity?, private val viewForm: View, private val images: MutableList<EstateImage>) : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.image_bottom_sheet, container, false)
     }
@@ -86,7 +85,7 @@ class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private v
             val uri: Uri = Utils.saveImageToInternalStorage(imageBitmap, context)
             images.add(EstateImage(estateId = 0, uri = uri.toString(), name = input.text.toString()))
             if (context != null) {
-                val imageViewPagerAdapter = ImageViewPagerAdapter(context!!, images, activity, viewForm, viewPager)
+                val imageViewPagerAdapter = ImageViewPagerAdapter(context!!, images, estateFormActivity, viewForm, viewPager)
                 viewPager.adapter = imageViewPagerAdapter
             }
         } else if (requestCode == Utils.GALLERY_REQUEST) {
@@ -104,7 +103,7 @@ class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private v
 
                 images.add(EstateImage(estateId = 0, uri = uri.toString(), name = input.text.toString()))
                 if (context != null) {
-                    val imageViewPagerAdapter = ImageViewPagerAdapter(context!!, images, activity, viewForm, viewPager)
+                    val imageViewPagerAdapter = ImageViewPagerAdapter(context!!, images, estateFormActivity, viewForm, viewPager)
                     viewPager.adapter = imageViewPagerAdapter
                 }
             }

@@ -2,12 +2,13 @@ package com.openclassrooms.realestatemanager.ui.viewmodel
 
 import androidx.lifecycle.*
 import com.openclassrooms.realestatemanager.data.model.Estate
-import com.openclassrooms.realestatemanager.domain.repository.EstateRepository
+import com.openclassrooms.realestatemanager.data.model.EstateModel
+import com.openclassrooms.realestatemanager.domain.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EstateViewModel(private val repository: EstateRepository): ViewModel() {
-    val allEstates: LiveData<List<Estate>> = repository.allEstates.asLiveData()
+    val allEstates: LiveData<List<EstateModel>> = repository.getAllEstates()
 
     private val _estateId : MutableLiveData<Long> = MutableLiveData()
     val estateId : LiveData<Long> = _estateId
