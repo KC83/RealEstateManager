@@ -78,7 +78,9 @@ class EstateDetailActivity : AppCompatActivity() {
                 estateImages.forEach { image ->
                     if(idx > 0) {
                         estateImageViewModel.insert(EstateImage(id = image.id, estateId = estateId, uri = image.uri, name = image.name))
-                        imagesToKeep.add(image.id)
+                        if (image.id > 0) {
+                            imagesToKeep.add(image.id)
+                        }
                     }
                     idx++
                 }
@@ -127,16 +129,7 @@ class EstateDetailActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
                 .replace(R.id.estate_detail_container, fragment)
                 .commit()
-
-        /*val mapsFragment = MapsFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel)
-            }
-        }
-        supportFragmentManager.beginTransaction()
-                .add(R.id.detail_map, mapsFragment)
-                .commit()*/
-
+        
         findViewById<FloatingActionButton>(R.id.estate_detail_button_form).setOnClickListener {
             val formIntent = Intent(this, EstateFormActivity::class.java)
             formIntent.putExtra(Utils.EXTRA_ESTATE_MODEL, estateModel)

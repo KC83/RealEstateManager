@@ -40,5 +40,9 @@
     <string name="camera_image">Prendre une photo</string>
     <string name="gallery_image">Ouvrir la galerie</string>
     <string name="points_of_interest">Points d\'intérêts à proximité</string>
+    <string name="maps_estates">Carte des biens</string>
+    <string name="convert_euro">Conversion de l\'Euro vers le Dollar</string>
+    <string name="today_date">Date du jour</string>
+    <string name="internet">Vérification de la connexion Internet</string>
 
 </resources>

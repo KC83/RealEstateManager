@@ -7,10 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EstateImageViewModel(private val repository: EstateImageRepository): ViewModel() {
-    /*fun getImagesForAEstate(estateId: Long): LiveData<List<EstateImage>> {
-        return repository.getImagesForAEstate(estateId).asLiveData()
-    }*/
-
     fun insert(estateImage: EstateImage) = viewModelScope.launch(Dispatchers.Default) {
         repository.insert(estateImage)
     }

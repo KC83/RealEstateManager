@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.utils
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
@@ -8,11 +9,14 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.net.Uri
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.openclassrooms.realestatemanager.R
@@ -21,8 +25,16 @@ import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.Place
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.form.ImageBottomSheetDialogFragment
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.round
+
 
 class Utils {
     companion object {
@@ -36,6 +48,7 @@ class Utils {
          */
         const val CAMERA_REQUEST = 100
         const val GALLERY_REQUEST = 200
+        const val LOCATION_REQUEST = 300
 
         /**
          * ACTIVITY EXTRA
@@ -46,6 +59,8 @@ class Utils {
         const val EXTRA_IMAGE = "EXTRA_IMAGE"
         const val EXTRA_PLACE = "EXTRA_PLACE"
         const val EXTRA_ESTATE_PLACE = "EXTRA_ESTATE_PLACE"
+        const val EXTRA_LAT = "EXTRA_LAT"
+        const val EXTRA_LNG = "EXTRA_LNG"
 
         /**
          * FORM CONSTANTS
@@ -53,12 +68,41 @@ class Utils {
         const val TEXT_INPUT_EDIT_TEXT = "TEXT_INPUT_EDIT_TEXT"
         const val AUTOCOMPLETE_TEXT_VIEW = "AUTOCOMPLETE_TEXT_VIEW"
         const val SLIDER = "SLIDER"
-
         const val DROPDOWN_AGENT = "AGENT"
         const val DROPDOWN_STATUS = "STATUS"
         const val DROPDOWN_TYPE = "TYPE"
 
-        // Method to save an image to internal storage
+        //### UTILS FUNCTIONS ###//
+        /**
+         * Convert euros to dollars
+         */
+        fun convertEuroToDollar(euros: Double): Double {
+            val number: Double = euros*1.21
+            return number.toBigDecimal().setScale(2, RoundingMode.UP).toDouble()
+        }
+
+        /**
+         * Return today date in this format : dd/MM/yyyy
+         */
+        @SuppressLint("SimpleDateFormat")
+        fun getTodayDate(): String {
+            val date = SimpleDateFormat("dd/MM/yyyy")
+            return date.format(Date())
+        }
+
+        /**
+         * Check if internet is available
+         */
+        fun isInternetAvailable(context: Context): Boolean {
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+
+            return activeNetwork?.isConnectedOrConnecting == true
+        }
+
+        /**
+         * Method to save an image to internal storage
+         */
         fun saveImageToInternalStorage(bitmap: Bitmap, applicationContext: Context?): Uri {
             // Get the context wrapper instance
             val wrapper = ContextWrapper(applicationContext)
@@ -90,7 +134,9 @@ class Utils {
             return Uri.parse(file.absolutePath)
         }
 
-        // Uri for a drawable (button add image)
+        /**
+         * Uri for a drawable (button add image)
+         */
         fun getUriAddImage(context: Context): Uri {
             return Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
                     + "://"
@@ -101,13 +147,17 @@ class Utils {
                     + context.resources.getResourceEntryName(R.drawable.ic_add_photo))
         }
 
-        // Set the image bottom sheet
+        /**
+         * Set the image bottom sheet
+         */
         fun setImageBottomSheet(images: MutableList<EstateImage>, viewPager: ViewPager, estateFormActivity: EstateFormActivity?, view: View, contentResolver: ContentResolver, supportFragmentManager: FragmentManager) {
             val imageBottomSheetDialogFragment = ImageBottomSheetDialogFragment(viewPager, contentResolver, estateFormActivity, view, images)
             imageBottomSheetDialogFragment.show(supportFragmentManager, "ImageBottomSheetDialogFragment")
         }
 
-        // Add programmatically chip
+        /**
+         * Add programmatically chip
+         */
         fun addChip(context: Context, chipGroup: ChipGroup, place: Place, isEstateDetailActivity: Boolean = false, isChecked: Boolean = false) {
             val chip = Chip(context)
             chip.id = place.id.toInt()
@@ -148,8 +198,11 @@ class Utils {
             chipGroup.addView(chip)
         }
 
-        fun getMapsURL(context: Context, estate: Estate, googleApi: String): String {
-            var address: String = ""
+        /**
+         * Get complete address of a estate
+         */
+        private fun getAddress(estate: Estate): String {
+            var address = ""
             if (estate.location.isNotEmpty()) {
                 address += estate.location.replace(' ', '+')
             }
@@ -172,23 +225,40 @@ class Utils {
                 address += estate.country.replace(' ', '+')
             }
 
-            var latLong = ""
+            return address
+        }
 
+        /**
+         * Get the google Map of a estate
+         */
+        fun getMapsURL(context: Context, estate: Estate, googleApi: String): String {
+            val address = getAddress(estate)
+            var marker = ""
+            val latLng: LatLng? = getLatLngFromAddress(context, estate)
+            if (latLng != null) {
+                marker = "&markers=color:green%7C"+latLng.latitude+","+latLng.longitude
+            }
+
+            return "https://maps.googleapis.com/maps/api/staticmap?center=" + address + "&zoom=18&size=600x300&maptype=roadmap&key=" + googleApi+marker
+        }
+
+        /**
+         * Get latitude an longitude from a address
+         */
+        fun getLatLngFromAddress(context: Context, estate: Estate): LatLng? {
+            val address = getAddress(estate)
+            var latLng: LatLng? = null
             val coder = Geocoder(context)
             try {
                 val addresses: ArrayList<Address> = coder.getFromLocationName(address, 50) as ArrayList<Address>
                 for (add in addresses) {
-                    val longitude: Double = add.longitude
-                    val latitude: Double = add.latitude
-
-                    val color = "green"
-                    latLong = "&markers=color:"+color+"%7C"+latitude+","+longitude
+                    latLng = LatLng(add.latitude, add.longitude)
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
 
-            return "https://maps.googleapis.com/maps/api/staticmap?center=" + address + "&zoom=18&size=600x300&maptype=roadmap&key=" + googleApi+latLong
+            return latLng
         }
     }
 }

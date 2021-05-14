@@ -43,10 +43,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // Room components
-    implementation "androidx.room:room-ktx:2.2.6"
-    implementation "androidx.room:room-runtime:2.2.6"
-    kapt "androidx.room:room-compiler:2.2.6"
-    androidTestImplementation "androidx.room:room-testing:2.2.6"
+    implementation "androidx.room:room-ktx:2.3.0"
+    implementation "androidx.room:room-runtime:2.3.0"
+    kapt "androidx.room:room-compiler:2.3.0"
+    androidTestImplementation "androidx.room:room-testing:2.3.0"
 
     // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
@@ -55,12 +55,12 @@ dependencies {
 
     // Kotlin components
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.21"
-    implementation "androidx.activity:activity-ktx:1.2.2"
+    implementation "androidx.activity:activity-ktx:1.2.3"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1"
 
     // Maps
-    implementation "com.google.android.gms:play-services-maps:17.0.0"
+    implementation "com.google.android.gms:play-services-maps:17.0.1"
 
     // Picasso
     implementation "com.squareup.picasso:picasso:2.71828"

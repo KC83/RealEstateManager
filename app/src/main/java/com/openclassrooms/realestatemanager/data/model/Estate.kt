@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.data.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 
 @Entity(tableName = "estate")
@@ -22,5 +23,8 @@ data class Estate(
         @ColumnInfo(name = "location") val location: String,
         @ColumnInfo(name = "zip_code") val zipCode: String,
         @ColumnInfo(name = "city") val city: String,
-        @ColumnInfo(name = "country") val country: String
+        @ColumnInfo(name = "country") val country: String,
+        @ColumnInfo(name = "lat") val lat: Double = 0.0,
+        @ColumnInfo(name = "lng") val lng: Double = 0.0,
+        @ColumnInfo(name = "map_uri") val map_uri: String = ""
 ) : Serializable

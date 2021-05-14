@@ -5,10 +5,10 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
 import android.text.InputType
 import android.util.Log
 import android.view.MotionEvent
@@ -18,9 +18,8 @@ import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.chip.Chip
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.slider.Slider
 import com.google.android.material.tabs.TabLayout
@@ -31,10 +30,10 @@ import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplicat
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
 import com.openclassrooms.realestatemanager.utils.DropdownItem
 import com.openclassrooms.realestatemanager.utils.Utils
+import com.squareup.picasso.Picasso
 import java.io.Serializable
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.log
 import kotlin.math.roundToInt
 
 class EstateFormActivity : AppCompatActivity() {
@@ -106,45 +105,7 @@ class EstateFormActivity : AppCompatActivity() {
 
         val btnSave = findViewById<Button>(R.id.form_btn_save)
         btnSave.setOnClickListener {
-            val estate = Estate(
-                    id = estateModel?.estate?.id ?: 0L,
-                    statusId = getLongValue(R.id.form_autocomplete_status),
-                    typeId = getLongValue(R.id.form_autocomplete_type),
-                    agentId = getLongValue(R.id.form_autocomplete_agent),
-                    insertDate = getStringValue(R.id.form_text_input_edit_insert_date),
-                    saleDate = getStringValue(R.id.form_text_input_edit_sale_date),
-                    price = getFloatValue(Utils.SLIDER, R.id.form_slider_price),
-                    surface = getFloatValue(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_surface),
-                    numberRooms = getIntValue(R.id.form_text_input_edit_rooms),
-                    numberBathrooms = getIntValue(R.id.form_text_input_edit_bathrooms),
-                    numberBedrooms = getIntValue(R.id.form_text_input_edit_bedrooms),
-                    description = getStringValue(R.id.form_text_input_edit_description),
-                    location = getStringValue(R.id.form_text_input_edit_location),
-                    zipCode = getStringValue(R.id.form_text_input_edit_zip_code),
-                    city = getStringValue(R.id.form_text_input_edit_city),
-                    country = getStringValue(R.id.form_text_input_edit_country)
-            )
-
-            // Check if inputs are not empty
-            if (checkInput(estate)) {
-                // Check if image is not empty
-                if (estateImages.size > 1) {
-                    val replyIntent= Intent()
-                    replyIntent.putExtra(Utils.EXTRA_ESTATE, estate as Serializable)
-                    replyIntent.putExtra(Utils.EXTRA_ESTATE_IMAGE, estateImages as Serializable)
-                    replyIntent.putExtra(Utils.EXTRA_IMAGE, images as Serializable)
-                    replyIntent.putExtra(Utils.EXTRA_PLACE, chipGroup.checkedChipIds as Serializable)
-                    if (estateModel != null) {
-                        replyIntent.putExtra(Utils.EXTRA_ESTATE_PLACE, estateModel.estatePlaces as Serializable)
-                    }
-                    setResult(Activity.RESULT_OK, replyIntent)
-                    finish()
-                } else {
-                    Toast.makeText(this, getString(R.string.error_image), Toast.LENGTH_LONG).show()
-                }
-            } else {
-                Toast.makeText(this, getString(R.string.error_input), Toast.LENGTH_LONG).show()
-            }
+            saveButton(estateModel, chipGroup)
         }
     }
 
@@ -205,9 +166,9 @@ class EstateFormActivity : AppCompatActivity() {
 
                     val date = getStringValue(id)
                     if (date.isNotEmpty()) {
-                        selectedDay = date.substring(0,2).toInt()
-                        selectedMonth = date.substring(3,5).toInt()-1
-                        selectedYear = date.substring(6,10).toInt()
+                        selectedDay = date.substring(0, 2).toInt()
+                        selectedMonth = date.substring(3, 5).toInt() - 1
+                        selectedYear = date.substring(6, 10).toInt()
                     }
 
                     val datePickerDialog = DatePickerDialog(this@EstateFormActivity, { _, year, monthOfYear, dayOfMonth ->
@@ -369,7 +330,86 @@ class EstateFormActivity : AppCompatActivity() {
 
         return value
     }
+    //##################
 
+    /**
+     * Action when save button is clicked
+     */
+    private fun saveButton(estateModel: EstateModel?, chipGroup: ChipGroup) {
+        var estate = Estate(
+                id = estateModel?.estate?.id ?: 0L,
+                statusId = getLongValue(R.id.form_autocomplete_status),
+                typeId = getLongValue(R.id.form_autocomplete_type),
+                agentId = getLongValue(R.id.form_autocomplete_agent),
+                insertDate = getStringValue(R.id.form_text_input_edit_insert_date),
+                saleDate = getStringValue(R.id.form_text_input_edit_sale_date),
+                price = getFloatValue(Utils.SLIDER, R.id.form_slider_price),
+                surface = getFloatValue(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_surface),
+                numberRooms = getIntValue(R.id.form_text_input_edit_rooms),
+                numberBathrooms = getIntValue(R.id.form_text_input_edit_bathrooms),
+                numberBedrooms = getIntValue(R.id.form_text_input_edit_bedrooms),
+                description = getStringValue(R.id.form_text_input_edit_description),
+                location = getStringValue(R.id.form_text_input_edit_location),
+                zipCode = getStringValue(R.id.form_text_input_edit_zip_code),
+                city = getStringValue(R.id.form_text_input_edit_city),
+                country = getStringValue(R.id.form_text_input_edit_country)
+        )
+
+        // Check if inputs are not empty
+        if (checkInput(estate)) {
+            // Check if image is not empty
+            if (estateImages.size > 1) {
+                // Get mapUri
+                var mapUriString = ""
+                val src: String = Utils.getMapsURL(this, estate, getString(R.string.GOOGLE_API_KEY))
+                Picasso.get()
+                        .load(src)
+                        .into(
+                                object: com.squareup.picasso.Target {
+                                    override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
+                                        saveEstate(estateModel, estate, chipGroup)
+                                    }
+                                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+                                    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                                        if (bitmap != null) {
+                                            val mapUri: Uri = Utils.saveImageToInternalStorage(bitmap,this@EstateFormActivity)
+                                            mapUriString = mapUri.toString()
+                                        }
+                                        estate = estate.copy(map_uri = mapUriString)
+
+                                        saveEstate(estateModel, estate, chipGroup)
+                                    }
+                                }
+                        )
+            } else {
+                Toast.makeText(this, getString(R.string.error_image), Toast.LENGTH_LONG).show()
+            }
+        } else {
+            Toast.makeText(this, getString(R.string.error_input), Toast.LENGTH_LONG).show()
+        }
+    }
+    /**
+     * Save estate
+     */
+    private fun saveEstate(estateModel: EstateModel?, estate: Estate, chipGroup: ChipGroup) {
+        var estateToSave = estate
+
+        val latLng: LatLng? = Utils.getLatLngFromAddress(this@EstateFormActivity, estateToSave)
+        if (latLng != null) {
+            estateToSave = estateToSave.copy(lat = latLng.latitude, lng = latLng.longitude)
+        }
+
+        val replyIntent= Intent()
+        replyIntent.putExtra(Utils.EXTRA_ESTATE, estateToSave as Serializable)
+        replyIntent.putExtra(Utils.EXTRA_ESTATE_IMAGE, estateImages as Serializable)
+        replyIntent.putExtra(Utils.EXTRA_IMAGE, images as Serializable)
+        replyIntent.putExtra(Utils.EXTRA_PLACE, chipGroup.checkedChipIds as Serializable)
+        if (estateModel != null) {
+            replyIntent.putExtra(Utils.EXTRA_ESTATE_PLACE, estateModel.estatePlaces as Serializable)
+        }
+        setResult(Activity.RESULT_OK, replyIntent)
+        finish()
+    }
     /**
      * Check if every input is not empty
      */
@@ -463,7 +503,7 @@ class EstateFormActivity : AppCompatActivity() {
         input.setText(estateImages[position].name)
         builder.setView(input)
 
-        builder.setPositiveButton("Ok",null)
+        builder.setPositiveButton("Ok", null)
         val dialog = builder.create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {

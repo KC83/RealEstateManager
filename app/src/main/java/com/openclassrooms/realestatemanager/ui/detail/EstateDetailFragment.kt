@@ -28,6 +28,7 @@ import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.ui.form.ImageViewPagerAdapter
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.squareup.picasso.Picasso
+import java.io.File
 
 class EstateDetailFragment : Fragment() {
     private var item: EstateModel? = null
@@ -67,8 +68,23 @@ class EstateDetailFragment : Fragment() {
 
             if (this.context != null) {
                 // Maps
-                val src: String = Utils.getMapsURL(this.context!!, it.estate, getString(R.string.GOOGLE_API_KEY))
-                Picasso.get().load(src).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
+                if (Utils.isInternetAvailable(this.requireContext())) {
+                    // If Internet is available, get the map
+                    val src: String = Utils.getMapsURL(this.context!!, it.estate, getString(R.string.GOOGLE_API_KEY))
+                    Picasso.get().load(src).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
+                } else {
+                    // If Internet is not available, we get saved map
+                    if (it.estate.map_uri.isNotEmpty()) {
+                        val file = File(it.estate.map_uri)
+                        if (file.exists()) {
+                            Picasso.get().load(file).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
+                        } else {
+                            Picasso.get().load(R.drawable.ic_no_location).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
+                        }
+                    } else {
+                        Picasso.get().load(R.drawable.ic_no_location).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
+                    }
+                }
 
                 // Setup images
                 if (it.images.size == 0) {
