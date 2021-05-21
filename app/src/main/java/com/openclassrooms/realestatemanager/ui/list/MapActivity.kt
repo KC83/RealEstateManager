@@ -11,7 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.EstateModel
-import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
+import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.viewmodel.EstateViewModel
 import com.openclassrooms.realestatemanager.ui.viewmodel.EstateViewModelFactory
 import com.openclassrooms.realestatemanager.utils.Utils

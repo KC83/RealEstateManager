@@ -1,19 +1,13 @@
 package com.openclassrooms.realestatemanager.ui.form
 
 import android.Manifest
-import android.app.Activity
-import android.content.ContentResolver
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,19 +15,12 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.EstateImage
-import com.openclassrooms.realestatemanager.ui.detail.EstateDetailActivity
 import com.openclassrooms.realestatemanager.utils.Utils
-import org.w3c.dom.Text
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class ImageViewPagerAdapter(var context: Context, var images: MutableList<EstateImage>, private val estateFormActivity: EstateFormActivity?, private val formView: View, private val viewPager: ViewPager, private val setOnClick: Boolean = true) : PagerAdapter() {
     private var inflater: LayoutInflater = LayoutInflater.from(context)
-
-    init {
-        inflater = LayoutInflater.from(context);
-    }
 
     override fun getCount(): Int {
         return images.size

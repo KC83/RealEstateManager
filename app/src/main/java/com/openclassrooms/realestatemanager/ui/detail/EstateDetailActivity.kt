@@ -12,7 +12,7 @@ import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
-import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
+import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.list.EstateListActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*

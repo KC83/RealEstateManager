@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.utils
 
-import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
@@ -9,8 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.net.Uri
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -30,10 +27,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.math.RoundingMode
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.round
 
 
 class Utils {
@@ -78,26 +72,7 @@ class Utils {
          */
         fun convertEuroToDollar(euros: Double): Double {
             val number: Double = euros*1.21
-            return number.toBigDecimal().setScale(2, RoundingMode.UP).toDouble()
-        }
-
-        /**
-         * Return today date in this format : dd/MM/yyyy
-         */
-        @SuppressLint("SimpleDateFormat")
-        fun getTodayDate(): String {
-            val date = SimpleDateFormat("dd/MM/yyyy")
-            return date.format(Date())
-        }
-
-        /**
-         * Check if internet is available
-         */
-        fun isInternetAvailable(context: Context): Boolean {
-            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-
-            return activeNetwork?.isConnectedOrConnecting == true
+            return number.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
         }
 
         /**
@@ -174,8 +149,8 @@ class Utils {
 
             if (!isEstateDetailActivity) {
                 // If it's not estateDetailActivity, set onChecked action
-                chip.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
+                chip.setOnCheckedChangeListener { _, chipIsChecked ->
+                    if (chipIsChecked) {
                         chip.chipBackgroundColor = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorSecondary))
                         chip.isCloseIconVisible = true
                     } else {
@@ -208,19 +183,19 @@ class Utils {
             }
             if (estate.zipCode.isNotEmpty()) {
                 if(address.isNotEmpty()) {
-                    address += "+";
+                    address += "+"
                 }
                 address += estate.zipCode.replace(' ', '+')
             }
             if (estate.city.isNotEmpty()) {
                 if(address.isNotEmpty()) {
-                    address += "+";
+                    address += "+"
                 }
                 address += estate.city.replace(' ', '+')
             }
             if (estate.country.isNotEmpty()) {
                 if(address.isNotEmpty()) {
-                    address += "+";
+                    address += "+"
                 }
                 address += estate.country.replace(' ', '+')
             }

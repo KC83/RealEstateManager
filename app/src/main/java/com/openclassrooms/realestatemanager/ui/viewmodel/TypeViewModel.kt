@@ -1,11 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.viewmodel
 
 import androidx.lifecycle.*
-import com.openclassrooms.realestatemanager.data.model.Agent
-import com.openclassrooms.realestatemanager.data.model.Status
 import com.openclassrooms.realestatemanager.data.model.Type
-import com.openclassrooms.realestatemanager.domain.repository.AgentRepository
-import com.openclassrooms.realestatemanager.domain.repository.StatusRepository
 import com.openclassrooms.realestatemanager.domain.repository.TypeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

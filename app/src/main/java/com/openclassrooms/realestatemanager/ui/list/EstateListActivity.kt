@@ -2,13 +2,13 @@ package com.openclassrooms.realestatemanager.ui.list
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,15 +23,19 @@ import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
-import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
+import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
-import com.openclassrooms.realestatemanager.utils.Utils
-import com.squareup.picasso.Picasso
-import okhttp3.internal.Util
+import com.openclassrooms.realestatemanager.utils.*
 
 class EstateListActivity : AppCompatActivity() {
     private var twoPane: Boolean = false
+    private val clock: Clock by lazy {
+        ClockImpl()
+    }
+    private val internetManager: InternetManager by lazy {
+        InternetManagerImpl(this)
+    }
 
     private val estateViewModel: EstateViewModel by viewModels {
         val app = application as RealEstateApplication
@@ -78,13 +82,13 @@ class EstateListActivity : AppCompatActivity() {
                     convertAlert()
                 }
                 R.id.btn_today_date -> {
-                    Toast.makeText(this,"Aujourd'hui, nous sommes le "+Utils.getTodayDate(),Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Aujourd'hui, nous sommes le " + clock.getCurrentDate(), Toast.LENGTH_LONG).show()
                 }
                 R.id.btn_internet -> {
-                    if (Utils.isInternetAvailable(this)) {
-                        Toast.makeText(this,"Vous êtes connecté à internet !",Toast.LENGTH_LONG).show()
+                    if (internetManager.isConnected()) {
+                        Toast.makeText(this, "Vous êtes connecté à internet !", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(this,"Vous n'êtes pas connecté à internet !",Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Vous n'êtes pas connecté à internet !", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -98,11 +102,11 @@ class EstateListActivity : AppCompatActivity() {
 
             when(menuItem.itemId) {
                 R.id.button_maps -> {
-                    if (Utils.isInternetAvailable(this)) {
-                        val intent = Intent(this,MapActivity::class.java)
+                    if (internetManager.isConnected()) {
+                        val intent = Intent(this, MapActivity::class.java)
                         startActivity(intent)
                     } else {
-                        Toast.makeText(this,"Vous n'êtes pas connecté à internet !",Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Vous n'êtes pas connecté à internet !", Toast.LENGTH_LONG).show()
                     }
                     true
                 }
@@ -118,7 +122,7 @@ class EstateListActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_bottom_app_bar,menu)
+        menuInflater.inflate(R.menu.menu_bottom_app_bar, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -133,7 +137,7 @@ class EstateListActivity : AppCompatActivity() {
                 val images: MutableList<EstateImage> = data.getSerializableExtra(Utils.EXTRA_ESTATE_IMAGE) as MutableList<EstateImage>
                 var idx = 0
                 images.forEach { image ->
-                    if(idx > 0) {
+                    if (idx > 0) {
                         estateImageViewModel.insert(EstateImage(estateId = estateId, uri = image.uri, name = image.name))
                     }
                     idx++
@@ -166,17 +170,32 @@ class EstateListActivity : AppCompatActivity() {
         editText.layoutParams = lp
         builder.setView(editText)
 
-        builder.setPositiveButton("Ok",null)
+        builder.setPositiveButton("Ok", null)
 
         val dialog = builder.create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             if (editText.text.isNotEmpty()) {
+                this.hideKeyboard()
+
                 val text = editText.text.toString()+"€ = "+Utils.convertEuroToDollar(editText.text.toString().toDouble())+"$"
-                Toast.makeText(this,text,Toast.LENGTH_LONG).show()
+                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
             } else {
                 Toast.makeText(this, "Merci de renseigner un montant", Toast.LENGTH_LONG).show()
             }
         }
     }
+
+
+}
+
+fun Activity.hideKeyboard() {
+    val imm = getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
+    //Find the currently focused view, so we can grab the correct window token from it.
+    var view = currentFocus
+    //If no view currently has focus, create a new one, just so we can grab a window token from it
+    if (view == null) {
+        view = View(this)
+    }
+    imm.hideSoftInputFromWindow(view.windowToken, 0)
 }

@@ -45,19 +45,17 @@ class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private v
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == AppCompatActivity.RESULT_OK) {
             // Open AlertDialog to set a description to the image
-            if(context != null) {
-                setAlertDialog(requestCode, data)
-            }
+            setAlertDialog(requestCode, data)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun setAlertDialog(requestCode: Int, data: Intent?) {
-        val builder = AlertDialog.Builder(context!!)
+        val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Ajouter une description")
         builder.setMessage("Merci de renseigner une description pour cette image")
 
-        val input = EditText(context)
+        val input = EditText(requireContext())
         val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
         input.layoutParams = lp
         input.hint = "Description"
@@ -71,10 +69,10 @@ class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private v
                 // Save image
                 saveImage(input, requestCode, data)
 
-                Toast.makeText(context, "Image enregistrée", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Image enregistrée", Toast.LENGTH_LONG).show()
                 dialog.dismiss()
             } else {
-                Toast.makeText(context, "Merci de renseigner une description", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Merci de renseigner une description", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -82,30 +80,26 @@ class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private v
         // Save image
         if (requestCode == Utils.CAMERA_REQUEST) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            val uri: Uri = Utils.saveImageToInternalStorage(imageBitmap, context)
+            val uri: Uri = Utils.saveImageToInternalStorage(imageBitmap, requireContext())
             images.add(EstateImage(estateId = 0, uri = uri.toString(), name = input.text.toString()))
-            if (context != null) {
-                val imageViewPagerAdapter = ImageViewPagerAdapter(context!!, images, estateFormActivity, viewForm, viewPager)
-                viewPager.adapter = imageViewPagerAdapter
-            }
+            val imageViewPagerAdapter = ImageViewPagerAdapter(requireContext(), images, estateFormActivity, viewForm, viewPager)
+            viewPager.adapter = imageViewPagerAdapter
         } else if (requestCode == Utils.GALLERY_REQUEST) {
             val dataUri: Uri? = data?.data
 
             if (data?.data != null) {
                 val uri = if(Build.VERSION.SDK_INT < 28) {
                     val imageBitmap = MediaStore.Images.Media.getBitmap(contentResolver, dataUri)
-                    Utils.saveImageToInternalStorage(imageBitmap, context)
+                    Utils.saveImageToInternalStorage(imageBitmap, requireContext())
                 } else {
                     val source = ImageDecoder.createSource(this.contentResolver, dataUri!!)
                     val imageBitmap = ImageDecoder.decodeBitmap(source)
-                    Utils.saveImageToInternalStorage(imageBitmap, context)
+                    Utils.saveImageToInternalStorage(imageBitmap, requireContext())
                 }
 
                 images.add(EstateImage(estateId = 0, uri = uri.toString(), name = input.text.toString()))
-                if (context != null) {
-                    val imageViewPagerAdapter = ImageViewPagerAdapter(context!!, images, estateFormActivity, viewForm, viewPager)
-                    viewPager.adapter = imageViewPagerAdapter
-                }
+                val imageViewPagerAdapter = ImageViewPagerAdapter(requireContext(), images, estateFormActivity, viewForm, viewPager)
+                viewPager.adapter = imageViewPagerAdapter
             }
         }
     }

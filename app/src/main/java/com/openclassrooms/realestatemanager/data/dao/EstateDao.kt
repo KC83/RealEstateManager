@@ -1,6 +1,5 @@
 package com.openclassrooms.realestatemanager.data.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.openclassrooms.realestatemanager.data.model.Estate
 import kotlinx.coroutines.flow.Flow

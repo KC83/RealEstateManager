@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
@@ -26,7 +25,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputEditText
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.*
-import com.openclassrooms.realestatemanager.domain.repository.RealEstateApplication
+import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
 import com.openclassrooms.realestatemanager.utils.DropdownItem
 import com.openclassrooms.realestatemanager.utils.Utils

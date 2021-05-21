@@ -2,19 +2,14 @@ package com.openclassrooms.realestatemanager.ui.list
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -24,7 +19,6 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailActivity
 import com.openclassrooms.realestatemanager.utils.Utils
-import okhttp3.internal.Util
 import java.io.Serializable
 
 class MapFragment : Fragment() {
@@ -61,34 +55,32 @@ class MapFragment : Fragment() {
         val markerOptions = MarkerOptions()
 
         // Set markers
-        if (this.context != null) {
-            if (items?.isNotEmpty() == true) {
-                items!!.forEach { item ->
-                    if (item.estate.lat != 0.0 && item.estate.lng != 0.0) {
-                        latLng = LatLng(item.estate.lat, item.estate.lng)
+        if (items?.isNotEmpty() == true) {
+            items!!.forEach { item ->
+                if (item.estate.lat != 0.0 && item.estate.lng != 0.0) {
+                    latLng = LatLng(item.estate.lat, item.estate.lng)
 
-                        // Set position to the marker
-                        markerOptions.position(latLng!!)
-                        // Set title to the marker
-                        markerOptions.title(item.estate.city)
+                    // Set position to the marker
+                    markerOptions.position(latLng!!)
+                    // Set title to the marker
+                    markerOptions.title(item.estate.city)
 
-                        googleMap.setOnMarkerClickListener {
-                            val intent = Intent(this.context, EstateDetailActivity::class.java).apply {
-                                putExtra(Utils.EXTRA_ESTATE_MODEL, item as Serializable)
-                            }
-                            this.context!!.startActivity(intent)
-                            return@setOnMarkerClickListener true
+                    googleMap.setOnMarkerClickListener {
+                        val intent = Intent(this.requireContext(), EstateDetailActivity::class.java).apply {
+                            putExtra(Utils.EXTRA_ESTATE_MODEL, item as Serializable)
                         }
-
-                        // Add marker
-                        googleMap.addMarker(markerOptions)
+                        this.requireContext().startActivity(intent)
+                        return@setOnMarkerClickListener true
                     }
+
+                    // Add marker
+                    googleMap.addMarker(markerOptions)
                 }
             }
         }
 
         // Check permission for the location of the user
-        if (ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.context!!, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this.requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             googleMap.isMyLocationEnabled = true
         }
 

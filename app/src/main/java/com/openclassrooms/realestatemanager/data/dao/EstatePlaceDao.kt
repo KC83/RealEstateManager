@@ -3,7 +3,6 @@ package com.openclassrooms.realestatemanager.data.dao
 import androidx.room.*
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.data.model.Place
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EstatePlaceDao {

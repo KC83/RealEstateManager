@@ -3,24 +3,16 @@ package com.openclassrooms.realestatemanager.ui.list
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.model.Estate
-import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailActivity
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
-import com.openclassrooms.realestatemanager.ui.viewmodel.AgentViewModel
-import com.openclassrooms.realestatemanager.ui.viewmodel.EstateImageViewModel
-import com.openclassrooms.realestatemanager.ui.viewmodel.StatusViewModel
-import com.openclassrooms.realestatemanager.ui.viewmodel.TypeViewModel
 import com.openclassrooms.realestatemanager.utils.Utils
 import java.io.Serializable
 

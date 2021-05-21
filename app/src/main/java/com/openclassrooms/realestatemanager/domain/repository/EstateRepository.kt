@@ -1,16 +1,12 @@
 package com.openclassrooms.realestatemanager.domain.repository
 
 import androidx.annotation.WorkerThread
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.openclassrooms.realestatemanager.data.dao.*
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateModel
-import com.openclassrooms.realestatemanager.data.model.Type
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 class EstateRepository(
         private val estateDao: EstateDao,

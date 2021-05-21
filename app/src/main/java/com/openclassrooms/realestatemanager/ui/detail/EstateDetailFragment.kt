@@ -1,37 +1,30 @@
 package com.openclassrooms.realestatemanager.ui.detail
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.viewpager.widget.ViewPager
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.tabs.TabLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.ui.form.ImageViewPagerAdapter
+import com.openclassrooms.realestatemanager.utils.InternetManager
+import com.openclassrooms.realestatemanager.utils.InternetManagerImpl
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.squareup.picasso.Picasso
 import java.io.File
 
 class EstateDetailFragment : Fragment() {
     private var item: EstateModel? = null
+    private val internetManager: InternetManager by lazy {
+        InternetManagerImpl(this.requireContext())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,65 +59,63 @@ class EstateDetailFragment : Fragment() {
             }
             rootView.findViewById<TextView>(R.id.detail_agent).text = String().plus("Agent : ").plus(it.agent.fullName)
 
-            if (this.context != null) {
-                // Maps
-                if (Utils.isInternetAvailable(this.requireContext())) {
-                    // If Internet is available, get the map
-                    val src: String = Utils.getMapsURL(this.context!!, it.estate, getString(R.string.GOOGLE_API_KEY))
-                    Picasso.get().load(src).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
-                } else {
-                    // If Internet is not available, we get saved map
-                    if (it.estate.map_uri.isNotEmpty()) {
-                        val file = File(it.estate.map_uri)
-                        if (file.exists()) {
-                            Picasso.get().load(file).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
-                        } else {
-                            Picasso.get().load(R.drawable.ic_no_location).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
-                        }
+            // Maps
+            if (internetManager.isConnected()) {
+                // If Internet is available, get the map
+                val src: String = Utils.getMapsURL(this.requireContext(), it.estate, getString(R.string.GOOGLE_API_KEY))
+                Picasso.get().load(src).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
+            } else {
+                // If Internet is not available, we get saved map
+                if (it.estate.map_uri.isNotEmpty()) {
+                    val file = File(it.estate.map_uri)
+                    if (file.exists()) {
+                        Picasso.get().load(file).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
                     } else {
                         Picasso.get().load(R.drawable.ic_no_location).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
                     }
-                }
-
-                // Setup images
-                if (it.images.size == 0) {
-                    it.images.add(EstateImage(estateId = it.estate.id, uri = Utils.getUriAddImage(this.context!!).toString(), name = "Pas d'image"))
-                    rootView.findViewById<TextView>(R.id.detail_image_description).text = ""
                 } else {
-                    rootView.findViewById<TextView>(R.id.detail_image_description).text = it.images[0].name
+                    Picasso.get().load(R.drawable.ic_no_location).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
+                }
+            }
+
+            // Setup images
+            if (it.images.size == 0) {
+                it.images.add(EstateImage(estateId = it.estate.id, uri = Utils.getUriAddImage(this.requireContext()).toString(), name = "Pas d'image"))
+                rootView.findViewById<TextView>(R.id.detail_image_description).text = ""
+            } else {
+                rootView.findViewById<TextView>(R.id.detail_image_description).text = it.images[0].name
+            }
+
+            val pager = rootView.findViewById<ViewPager>(R.id.detail_image_view_pager)
+            val imageViewPagerAdapter = ImageViewPagerAdapter(this.requireContext(), it.images, null, rootView, pager, false)
+
+            pager.adapter = imageViewPagerAdapter
+
+            val tabLayout = rootView.findViewById<TabLayout>(R.id.detail_tab_layout)
+            tabLayout.setupWithViewPager(pager, true)
+            tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab?) {
+                    if (tab?.position != null) {
+                        rootView.findViewById<TextView>(R.id.detail_image_description).text = it.images[tab.position].name
+                    }
                 }
 
-                val pager = rootView.findViewById<ViewPager>(R.id.detail_image_view_pager)
-                val imageViewPagerAdapter = ImageViewPagerAdapter(this.context!!, it.images, null, rootView, pager, false)
+                override fun onTabUnselected(tab: TabLayout.Tab?) {}
 
-                pager.adapter = imageViewPagerAdapter
+                override fun onTabReselected(tab: TabLayout.Tab?) {}
 
-                val tabLayout = rootView.findViewById<TabLayout>(R.id.detail_tab_layout)
-                tabLayout.setupWithViewPager(pager, true)
-                tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                    override fun onTabSelected(tab: TabLayout.Tab?) {
-                        if (tab?.position != null) {
-                            rootView.findViewById<TextView>(R.id.detail_image_description).text = it.images[tab.position].name
-                        }
-                    }
+            })
 
-                    override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            // Setup places
+            // Get chipGroup
+            val titleChipGroup: TextView = rootView.findViewById(R.id.detail_title_chip_group)
+            val chipGroup: ChipGroup = rootView.findViewById(R.id.detail_chip_group)
 
-                    override fun onTabReselected(tab: TabLayout.Tab?) {}
-
-                })
-
-                // Setup places
-                // Get chipGroup
-                val titleChipGroup: TextView = rootView.findViewById(R.id.detail_title_chip_group)
-                val chipGroup: ChipGroup = rootView.findViewById(R.id.detail_chip_group)
-
-                if (it.places.isEmpty()) {
-                    titleChipGroup.visibility = View.INVISIBLE
-                } else if(it.places.isNotEmpty()) {
-                    it.places.map { place ->
-                        Utils.addChip(this.context!!, chipGroup, place, true)
-                    }
+            if (it.places.isEmpty()) {
+                titleChipGroup.visibility = View.INVISIBLE
+            } else if(it.places.isNotEmpty()) {
+                it.places.map { place ->
+                    Utils.addChip(this.requireContext(), chipGroup, place, true)
                 }
             }
         }

@@ -1,7 +1,8 @@
-package com.openclassrooms.realestatemanager.domain.repository
+package com.openclassrooms.realestatemanager.domain
 
 import android.app.Application
 import com.openclassrooms.realestatemanager.data.RealEstateRoomDatabase
+import com.openclassrooms.realestatemanager.domain.repository.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
@@ -16,7 +17,7 @@ class RealEstateApplication : Application() {
         AgentRepository(database.agentDao())
     }
     val estatePlaceRepository by lazy {
-        EstatePlaceRepository(database.estatePlaceDao(), null)
+        EstatePlaceRepository(database.estatePlaceDao())
     }
     val estateRepository by lazy {
         EstateRepository(database.estateDao(), database.typeDao(), database.statusDao(), database.agentDao(), database.estateImageDao(), database.estatePlaceDao())

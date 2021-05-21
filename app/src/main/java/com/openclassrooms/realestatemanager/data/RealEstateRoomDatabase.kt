@@ -11,7 +11,7 @@ import com.openclassrooms.realestatemanager.data.model.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = arrayOf(Agent::class, Estate::class, EstatePlace::class, EstateImage::class, Place::class, Status::class, Type::class), version = 1, exportSchema = false)
+@Database(entities = [Agent::class, Estate::class, EstatePlace::class, EstateImage::class, Place::class, Status::class, Type::class], version = 1, exportSchema = false)
 abstract class RealEstateRoomDatabase : RoomDatabase() {
     abstract fun agentDao(): AgentDao
     abstract fun estateDao(): EstateDao

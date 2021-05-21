@@ -2,7 +2,6 @@ package com.openclassrooms.realestatemanager.data.dao
 
 import androidx.room.*
 import com.openclassrooms.realestatemanager.data.model.EstateImage
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EstateImageDao {

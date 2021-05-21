@@ -7,10 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class EstatePlaceViewModel(private val repository: EstatePlaceRepository): ViewModel() {
-    /*fun getPlacesForAEstate(estateId: Long): LiveData<List<EstatePlace>> {
-        return repository.getPlacesForAEstate(estateId).asLiveData()
-    }*/
-
     fun insert(estatePlace: EstatePlace) = viewModelScope.launch(Dispatchers.Default) {
         repository.insert(estatePlace)
     }
