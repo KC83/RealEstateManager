@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_wi_fi"
         android:title="@string/internet"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/btn_mortgage_loan"
+        android:icon="@drawable/ic_mortgage_loan"
+        android:title="@string/mortgage_loan"
+        app:showAsAction="ifRoom" />
 </menu>

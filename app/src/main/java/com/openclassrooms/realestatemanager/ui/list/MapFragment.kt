@@ -85,7 +85,7 @@ class MapFragment : Fragment() {
         }
 
         // Set current location
-        val currentLocation = CameraUpdateFactory.newLatLngZoom(currentLatLng, 16F)
+        val currentLocation = CameraUpdateFactory.newLatLngZoom(currentLatLng, 15F)
         googleMap.moveCamera(currentLocation)
     }
 

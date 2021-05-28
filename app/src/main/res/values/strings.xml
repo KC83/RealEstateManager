@@ -44,5 +44,12 @@
     <string name="convert_euro">Conversion de l\'Euro vers le Dollar</string>
     <string name="today_date">Date du jour</string>
     <string name="internet">Vérification de la connexion Internet</string>
+    <string name="mortgage_loan">Simulateur de prêt immobilier</string>
+    <string name="filter">Filtrer les biens</string>
+    <string name="loan_amount">Montant de votre prêt</string>
+    <string name="interest_rate">Taux d\'intérêt</string>
+    <string name="loan_duration">Durée de votre prêt</string>
+    <string name="euro_to_dollar">Euro vers Dollar</string>
+    <string name="dollar_to_euro">Dollar vers Euro</string>
 
 </resources>

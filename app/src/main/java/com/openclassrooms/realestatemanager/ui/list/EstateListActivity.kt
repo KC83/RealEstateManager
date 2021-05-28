@@ -3,21 +3,19 @@ package com.openclassrooms.realestatemanager.ui.list
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
-import android.view.View
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textfield.TextInputEditText
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
@@ -27,19 +25,27 @@ import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
 import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.tools.Converter
+import com.openclassrooms.realestatemanager.utils.tools.ConverterImpl
 
 class EstateListActivity : AppCompatActivity() {
     private var twoPane: Boolean = false
+
     private val clock: Clock by lazy {
         ClockImpl()
     }
     private val internetManager: InternetManager by lazy {
         InternetManagerImpl(this)
     }
+    private val loan: Loan by lazy {
+        LoanImpl()
+    }
+    private val converter: Converter by lazy {
+        ConverterImpl()
+    }
 
     private val estateViewModel: EstateViewModel by viewModels {
-        val app = application as RealEstateApplication
-        EstateViewModelFactory(app.estateRepository)
+        EstateViewModelFactory((application as RealEstateApplication).estateRepository)
     }
     private val estateImageViewModel: EstateImageViewModel by viewModels {
         EstateImageViewModelFactory((application as RealEstateApplication).estateImageRepository)
@@ -52,7 +58,7 @@ class EstateListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estate_list)
 
-        if (findViewById<NestedScrollView>(R.id.estate_detail_container) != null) {
+        if (findViewById<RelativeLayout>(R.id.estate_detail_container) != null) {
             twoPane = true
         }
 
@@ -91,6 +97,9 @@ class EstateListActivity : AppCompatActivity() {
                         Toast.makeText(this, "Vous n'êtes pas connecté à internet !", Toast.LENGTH_LONG).show()
                     }
                 }
+                R.id.btn_mortgage_loan -> {
+                    mortgageLoanAlert()
+                }
             }
 
             true
@@ -101,13 +110,16 @@ class EstateListActivity : AppCompatActivity() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 
             when(menuItem.itemId) {
-                R.id.button_maps -> {
+                R.id.btn_maps -> {
                     if (internetManager.isConnected()) {
                         val intent = Intent(this, MapActivity::class.java)
                         startActivity(intent)
                     } else {
                         Toast.makeText(this, "Vous n'êtes pas connecté à internet !", Toast.LENGTH_LONG).show()
                     }
+                    true
+                }
+                R.id.btn_filter -> {
                     true
                 }
                 else -> false
@@ -160,42 +172,81 @@ class EstateListActivity : AppCompatActivity() {
     private fun setupRecyclerView(recyclerView: RecyclerView, estates: List<EstateModel>) {
         recyclerView.adapter = EstateListAdapter(this, estates, twoPane)
     }
+
     private fun convertAlert() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Conversion de l'Euro vers le Dollard")
-        builder.setMessage("Merci de renseigner un montant")
+        val materialAlertDialogBuilder = MaterialAlertDialogBuilder(this)
+        val dialogConvert = LayoutInflater.from(this).inflate(R.layout.dialog_convert,null,false)
 
-        val editText = EditText(this)
-        val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
-        editText.layoutParams = lp
-        builder.setView(editText)
+        val convertAmount = dialogConvert.findViewById<TextInputEditText>(R.id.dialog_text_input_edit_convert_amount)
+        val radioButtonEuro = dialogConvert.findViewById<RadioButton>(R.id.dialog_radio_button_euro)
+        val radioButtonDollar = dialogConvert.findViewById<RadioButton>(R.id.dialog_radio_button_dollar)
 
-        builder.setPositiveButton("Ok", null)
+        materialAlertDialogBuilder.setView(dialogConvert)
+            .setTitle("Conversion de devises")
+            .setPositiveButton("Valider") { dialog, _ ->
+            }
+            .setNegativeButton("Annuler") { dialog, _ ->
+                dialog.dismiss()
+            }
 
-        val dialog = builder.create()
+        val dialog = materialAlertDialogBuilder.create()
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            if (editText.text.isNotEmpty()) {
-                this.hideKeyboard()
+            if (convertAmount.text?.isNotEmpty() == true) {
+                var amount = 0.0
+                var text = ""
 
-                val text = editText.text.toString()+"€ = "+Utils.convertEuroToDollar(editText.text.toString().toDouble())+"$"
-                Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+                if (radioButtonEuro.isChecked) {
+                    amount = converter.convertEuroToDollar(convertAmount.text.toString().toDouble())
+                    text = convertAmount.text.toString()+"€ = "+amount+"$"
+                }
+                if (radioButtonDollar.isChecked) {
+                    amount = converter.convertDollarToEuro(convertAmount.text.toString().toDouble())
+                    text = convertAmount.text.toString()+"$ = "+amount+"€"
+                }
+
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Conversion de devises")
+                builder.setMessage(text)
+                builder.show()
             } else {
-                Toast.makeText(this, "Merci de renseigner un montant", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Merci de renseigner tous les éléments", Toast.LENGTH_LONG).show()
             }
         }
     }
 
+    private fun mortgageLoanAlert() {
+        val materialAlertDialogBuilder = MaterialAlertDialogBuilder(this)
+        val dialogMortgageLoan = LayoutInflater.from(this).inflate(R.layout.dialog_mortgage_loan,null,false)
 
-}
+        val loanAmount = dialogMortgageLoan.findViewById<TextInputEditText>(R.id.dialog_text_input_edit_loan_amount)
+        val interestRate = dialogMortgageLoan.findViewById<TextInputEditText>(R.id.dialog_text_input_edit_interest_rate)
+        val loanDuration = dialogMortgageLoan.findViewById<TextInputEditText>(R.id.dialog_text_input_edit_loan_duration)
 
-fun Activity.hideKeyboard() {
-    val imm = getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE) as InputMethodManager
-    //Find the currently focused view, so we can grab the correct window token from it.
-    var view = currentFocus
-    //If no view currently has focus, create a new one, just so we can grab a window token from it
-    if (view == null) {
-        view = View(this)
+        materialAlertDialogBuilder.setView(dialogMortgageLoan)
+            .setTitle("Simulateur de prêt immobilier")
+            .setMessage("Calcul des mensualités de votre prêt immobilier")
+            .setPositiveButton("Valider") { dialog, _ ->
+            }
+            .setNegativeButton("Annuler") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+        val dialog = materialAlertDialogBuilder.create()
+        dialog.show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            if (loanAmount.text?.isNotEmpty() == true && interestRate.text?.isNotEmpty() == true && loanDuration.text?.isNotEmpty() == true) {
+                loan.setLoanAmount(loanAmount.text.toString().toDouble())
+                loan.setInterestRate(interestRate.text.toString().toDouble())
+                loan.setLoanDuration(loanDuration.text.toString().toInt())
+
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Simulateur de prêt immobilier")
+                builder.setMessage("Montant des mensualités : "+loan.getMonthlyPayment()+"/mois")
+                builder.show()
+            } else {
+                Toast.makeText(this, "Merci de renseigner tous les éléments", Toast.LENGTH_LONG).show()
+            }
+        }
     }
-    imm.hideSoftInputFromWindow(view.windowToken, 0)
 }

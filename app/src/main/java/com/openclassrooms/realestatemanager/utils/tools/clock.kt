@@ -5,13 +5,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 interface Clock {
-    fun getCurrentDate(): String
+    fun getCurrentDate(date: Date = Date()): String
 }
 
 class ClockImpl : Clock {
     @SuppressLint("SimpleDateFormat")
-    override fun getCurrentDate(): String {
-        val date = SimpleDateFormat("dd/MM/yyyy")
-        return date.format(Date())
+    override fun getCurrentDate(date: Date): String {
+        val simpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+        return simpleDateFormat.format(date)
     }
 }

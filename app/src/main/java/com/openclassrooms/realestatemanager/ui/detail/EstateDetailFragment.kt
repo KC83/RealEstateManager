@@ -60,11 +60,7 @@ class EstateDetailFragment : Fragment() {
             rootView.findViewById<TextView>(R.id.detail_agent).text = String().plus("Agent : ").plus(it.agent.fullName)
 
             // Maps
-            if (internetManager.isConnected()) {
-                // If Internet is available, get the map
-                val src: String = Utils.getMapsURL(this.requireContext(), it.estate, getString(R.string.GOOGLE_API_KEY))
-                Picasso.get().load(src).into(rootView.findViewById<ImageView>(R.id.detail_map_image))
-            } else {
+            if (!internetManager.isConnected()) {
                 // If Internet is not available, we get saved map
                 if (it.estate.map_uri.isNotEmpty()) {
                     val file = File(it.estate.map_uri)
@@ -120,5 +116,28 @@ class EstateDetailFragment : Fragment() {
             }
         }
         return rootView
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+
+        if(isVisibleToUser && isResumed) {
+            onResume()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!userVisibleHint) {
+            return
+        }
+
+        item?.let {
+            if (internetManager.isConnected()) {
+                // If Internet is available, get the map
+                val src: String = Utils.getMapsURL(this.requireContext(), it.estate, getString(R.string.GOOGLE_API_KEY))
+                Picasso.get().load(src).into(activity?.findViewById(R.id.detail_map_image))
+            }
+        }
     }
 }
