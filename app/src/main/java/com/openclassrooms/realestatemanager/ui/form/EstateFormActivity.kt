@@ -27,6 +27,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.*
 import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
+import com.openclassrooms.realestatemanager.utils.ChipItem
 import com.openclassrooms.realestatemanager.utils.DropdownItem
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.squareup.picasso.Picasso
@@ -94,7 +95,8 @@ class EstateFormActivity : AppCompatActivity() {
                     }
                 }
 
-                Utils.addChip(this, chipGroup, place, false, isChecked)
+                val chipItem = ChipItem(place.id.toInt(), place.name, place.logo)
+                Utils.addChip(this, chipGroup, chipItem, false, isChecked)
             }
         })
 

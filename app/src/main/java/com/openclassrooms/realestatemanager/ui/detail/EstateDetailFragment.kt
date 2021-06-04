@@ -14,6 +14,7 @@ import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.ui.form.ImageViewPagerAdapter
+import com.openclassrooms.realestatemanager.utils.ChipItem
 import com.openclassrooms.realestatemanager.utils.InternetManager
 import com.openclassrooms.realestatemanager.utils.InternetManagerImpl
 import com.openclassrooms.realestatemanager.utils.Utils
@@ -111,7 +112,8 @@ class EstateDetailFragment : Fragment() {
                 titleChipGroup.visibility = View.INVISIBLE
             } else if(it.places.isNotEmpty()) {
                 it.places.map { place ->
-                    Utils.addChip(this.requireContext(), chipGroup, place, true)
+                    val chipItem = ChipItem(place.id.toInt(), place.name, place.logo)
+                    Utils.addChip(this.requireContext(), chipGroup, chipItem, true)
                 }
             }
         }

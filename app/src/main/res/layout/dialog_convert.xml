@@ -1,58 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/dialog_text_convert_amount"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        app:errorEnabled="true"
-        android:hint="@string/price"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:startIconDrawable="@drawable/ic_price_small">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/dialog_text_input_edit_convert_amount"
+        android:layout_marginTop="16dp">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/dialog_text_convert_amount"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            app:errorEnabled="true"
+            android:hint="@string/price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:startIconDrawable="@drawable/ic_price_small">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/dialog_text_input_edit_convert_amount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
 
-
-    <RadioGroup
-        android:id="@+id/dialog_radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:checkedButton="@+id/dialog_radio_button_euro"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_text_convert_amount">
-
-        <RadioButton
-            android:id="@+id/dialog_radio_button_euro"
+        </com.google.android.material.textfield.TextInputLayout>
+        <RadioGroup
+            android:id="@+id/dialog_radio_group"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/euro_to_dollar" />
+            android:layout_height="wrap_content"
+            android:checkedButton="@+id/dialog_radio_button_euro"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dialog_text_convert_amount">
 
-        <RadioButton
-            android:id="@+id/dialog_radio_button_dollar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/dollar_to_euro" />
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/dialog_radio_button_euro"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/euro_to_dollar" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <RadioButton
+                android:id="@+id/dialog_radio_button_dollar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/dollar_to_euro" />
+        </RadioGroup>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

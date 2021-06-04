@@ -66,6 +66,15 @@ class Utils {
         const val DROPDOWN_STATUS = "STATUS"
         const val DROPDOWN_TYPE = "TYPE"
 
+        /**
+         * LIST CONSTANTS
+         */
+        const val FILTER_STATUS = 0
+        const val FILTER_AGENT = 1
+        const val FILTER_TYPE = 2
+        const val FILTER_PRICE = 3
+        const val FILTER_SURFACE = 4
+
         //### UTILS FUNCTIONS ###//
         /**
          * Convert euros to dollars
@@ -133,12 +142,12 @@ class Utils {
         /**
          * Add programmatically chip
          */
-        fun addChip(context: Context, chipGroup: ChipGroup, place: Place, isEstateDetailActivity: Boolean = false, isChecked: Boolean = false) {
+        fun addChip(context: Context, chipGroup: ChipGroup, chipItem: ChipItem, isEstateDetailActivity: Boolean = false, isChecked: Boolean = false) {
             val chip = Chip(context)
-            chip.id = place.id.toInt()
-            chip.text = place.name
-            if (place.logo != 0) {
-                chip.chipIcon = ContextCompat.getDrawable(context, place.logo)
+            chip.id = chipItem.id
+            chip.text = chipItem.name
+            if (chipItem.logo != 0) {
+                chip.chipIcon = ContextCompat.getDrawable(context, chipItem.logo)
             }
             chip.isClickable = true
             chip.isCheckable = true
