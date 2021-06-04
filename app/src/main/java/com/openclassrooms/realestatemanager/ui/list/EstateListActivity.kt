@@ -27,9 +27,7 @@ import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
 import com.openclassrooms.realestatemanager.utils.*
-import com.openclassrooms.realestatemanager.utils.tools.Converter
-import com.openclassrooms.realestatemanager.utils.tools.ConverterImpl
-import okhttp3.internal.Util
+import com.openclassrooms.realestatemanager.utils.tools.*
 import java.util.*
 
 class EstateListActivity : AppCompatActivity() {
@@ -104,17 +102,17 @@ class EstateListActivity : AppCompatActivity() {
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when(menuItem.itemId) {
-                R.id.btn_convert_euros -> {
+                R.id.btn_converter -> {
                     convertAlert()
                 }
                 R.id.btn_today_date -> {
-                    Toast.makeText(this, "Aujourd'hui, nous sommes le " + clock.getCurrentDate(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.today_date)+" : " + clock.getCurrentDate(), Toast.LENGTH_LONG).show()
                 }
                 R.id.btn_internet -> {
                     if (internetManager.isConnected()) {
-                        Toast.makeText(this, "Vous êtes connecté à internet !", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.internet_connected), Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(this, "Vous n'êtes pas connecté à internet !", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.internet_disconnected), Toast.LENGTH_LONG).show()
                     }
                 }
                 R.id.btn_mortgage_loan -> {
@@ -135,7 +133,7 @@ class EstateListActivity : AppCompatActivity() {
                         val intent = Intent(this, MapActivity::class.java)
                         startActivity(intent)
                     } else {
-                        Toast.makeText(this, "Vous n'êtes pas connecté à internet !", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.internet_disconnected), Toast.LENGTH_LONG).show()
                     }
                     true
                 }
@@ -268,10 +266,10 @@ class EstateListActivity : AppCompatActivity() {
         val radioButtonDollar = dialogConvert.findViewById<RadioButton>(R.id.dialog_radio_button_dollar)
 
         materialAlertDialogBuilder.setView(dialogConvert)
-            .setTitle("Conversion de devises")
-            .setPositiveButton("Valider") { dialog, _ ->
+            .setTitle(getString(R.string.converter))
+            .setPositiveButton(getString(R.string.validate)) { _, _ ->
             }
-            .setNegativeButton("Annuler") { dialog, _ ->
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
 
@@ -279,7 +277,7 @@ class EstateListActivity : AppCompatActivity() {
         dialog.show()
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             if (convertAmount.text?.isNotEmpty() == true) {
-                var amount = 0.0
+                var amount: Double
                 var text = ""
 
                 if (radioButtonEuro.isChecked) {
@@ -296,7 +294,7 @@ class EstateListActivity : AppCompatActivity() {
                 builder.setMessage(text)
                 builder.show()
             } else {
-                Toast.makeText(this, "Merci de renseigner tous les éléments", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.form_error), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -310,10 +308,10 @@ class EstateListActivity : AppCompatActivity() {
         val loanDuration = dialogMortgageLoan.findViewById<TextInputEditText>(R.id.dialog_text_input_edit_loan_duration)
 
         materialAlertDialogBuilder.setView(dialogMortgageLoan)
-            .setTitle("Simulateur de prêt immobilier")
-            .setMessage("Calcul des mensualités de votre prêt immobilier")
-            .setPositiveButton("Valider") { dialog, _ -> }
-            .setNegativeButton("Annuler") { dialog, _ ->
+            .setTitle(getString(R.string.mortgage_loan))
+            .setMessage(getString(R.string.monthly_payment))
+            .setPositiveButton(getString(R.string.validate)) { _, _ -> }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
 
@@ -326,11 +324,11 @@ class EstateListActivity : AppCompatActivity() {
                 loan.setLoanDuration(loanDuration.text.toString().toInt())
 
                 val builder = AlertDialog.Builder(this)
-                builder.setTitle("Simulateur de prêt immobilier")
-                builder.setMessage("Montant des mensualités : "+loan.getMonthlyPayment()+"/mois")
+                builder.setTitle(getString(R.string.mortgage_loan))
+                builder.setMessage(getString(R.string.amount_monthly_payment)+loan.getMonthlyPayment())
                 builder.show()
             } else {
-                Toast.makeText(this, "Merci de renseigner tous les éléments", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.form_error), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -408,10 +406,10 @@ class EstateListActivity : AppCompatActivity() {
         })
 
         materialAlertDialogBuilder.setView(dialogFilter)
-            .setTitle("Filtre des biens")
-            .setPositiveButton("Valider") { dialog, _ -> }
-            .setNeutralButton("Effacer") { dialog, _ -> }
-            .setNegativeButton("Annuler") { dialog, _ ->
+            .setTitle(getString(R.string.estate_filter))
+            .setPositiveButton(getString(R.string.validate)) { _, _ -> }
+            .setNeutralButton(getString(R.string.erase)) { _, _ -> }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
 

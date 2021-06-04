@@ -52,8 +52,8 @@ class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private v
 
     private fun setAlertDialog(requestCode: Int, data: Intent?) {
         val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Ajouter une description")
-        builder.setMessage("Merci de renseigner une description pour cette image")
+        builder.setTitle(getString(R.string.add_description))
+        builder.setMessage(getString(R.string.enter_description_image))
 
         val input = EditText(requireContext())
         val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
@@ -69,10 +69,10 @@ class ImageBottomSheetDialogFragment(private val viewPager: ViewPager, private v
                 // Save image
                 saveImage(input, requestCode, data)
 
-                Toast.makeText(requireContext(), "Image enregistrée", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.image_saved), Toast.LENGTH_LONG).show()
                 dialog.dismiss()
             } else {
-                Toast.makeText(requireContext(), "Merci de renseigner une description", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.enter_description), Toast.LENGTH_LONG).show()
             }
         }
     }

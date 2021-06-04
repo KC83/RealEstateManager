@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/btn_convert_euros"
+        android:id="@+id/btn_converter"
         android:icon="@drawable/ic_exchange"
-        android:title="@string/convert_euro"
+        android:title="@string/converter"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/btn_today_date"

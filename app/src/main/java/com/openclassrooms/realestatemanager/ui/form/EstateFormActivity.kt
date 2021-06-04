@@ -427,7 +427,7 @@ class EstateFormActivity : AppCompatActivity() {
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_city, null)
         setError(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_country, null)
 
-        val statusSale = statusViewModel.getStatusByName("Vendu")
+        val statusSale = statusViewModel.getStatusByName(getString(R.string.sale))
         val statusSaleId: Long = statusSale?.id ?: 0L
 
         when {
@@ -494,8 +494,8 @@ class EstateFormActivity : AppCompatActivity() {
      */
     private fun setAlertDialog(position: Int) {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Ajouter une description")
-        builder.setMessage("Merci de renseigner une description pour cette image")
+        builder.setTitle(getString(R.string.add_description))
+        builder.setMessage(getString(R.string.enter_description_image))
 
         val input = EditText(this)
         val lp = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
@@ -512,10 +512,10 @@ class EstateFormActivity : AppCompatActivity() {
                 estateImages[position].name = input.text.toString()
                 setImageRecyclerView(View(this))
 
-                Toast.makeText(this, "Description enregistrée", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.description_saved), Toast.LENGTH_LONG).show()
                 dialog.dismiss()
             } else {
-                Toast.makeText(this, "Merci de renseigner une description", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.enter_description), Toast.LENGTH_LONG).show()
             }
         }
     }

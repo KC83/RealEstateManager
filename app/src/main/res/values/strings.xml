@@ -41,7 +41,6 @@
     <string name="gallery_image">Ouvrir la galerie</string>
     <string name="points_of_interest">Points d\'intérêts à proximité</string>
     <string name="maps_estates">Carte des biens</string>
-    <string name="convert_euro">Conversion de l\'Euro vers le Dollar</string>
     <string name="today_date">Date du jour</string>
     <string name="internet">Vérification de la connexion Internet</string>
     <string name="mortgage_loan">Simulateur de prêt immobilier</string>
@@ -51,5 +50,29 @@
     <string name="loan_duration">Durée de votre prêt</string>
     <string name="euro_to_dollar">Euro vers Dollar</string>
     <string name="dollar_to_euro">Dollar vers Euro</string>
+    <string name="cancel">Annuler</string>
+    <string name="erase">Effacer</string>
+    <string name="validate">Valider</string>
+    <string name="estate_filter">Filtre des biens</string>
+    <string name="monthly_payment">Calcul des mensualités de votre prêt immobilier</string>
+    <string name="amount_monthly_payment">Montant des mensualités : </string>
+    <string name="converter">Conversion de devises</string>
+    <string name="internet_connected">Vous êtes connecté à internet !</string>
+    <string name="internet_disconnected">Vous n\'êtes pas connecté à internet !</string>
+    <string name="dollar">$</string>
+    <string name="rooms">\" pièce(s)\"</string>
+    <string name="bedrooms">\" chambre(s)\"</string>
+    <string name="bathrooms">\" salle(s) de bain\"</string>
+    <string name="add_the">\"Ajouté le \"</string>
+    <string name="sale_the">\"Vendu le \"</string>
+    <string name="not_sold">Non vendu</string>
+    <string name="agent_fragment">\"Agent : \"</string>
+    <string name="no_image">Pas d\'image</string>
+    <string name="add_description">Ajouter une description</string>
+    <string name="enter_description_image">Merci de renseigner une description pour cette image</string>
+    <string name="description_saved">Description enregistrée</string>
+    <string name="enter_description">Merci de renseigner une description</string>
+    <string name="sale">Vendu</string>
+    <string name="image_saved">Image enregistrée</string>
 
 </resources>

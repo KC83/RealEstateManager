@@ -1,7 +1,7 @@
 package com.openclassrooms.realestatemanager
 
-import com.openclassrooms.realestatemanager.utils.ClockImpl
-import com.openclassrooms.realestatemanager.utils.LoanImpl
+import com.openclassrooms.realestatemanager.utils.tools.ClockImpl
+import com.openclassrooms.realestatemanager.utils.tools.LoanImpl
 import com.openclassrooms.realestatemanager.utils.tools.ConverterImpl
 import org.junit.Test
 import java.util.*

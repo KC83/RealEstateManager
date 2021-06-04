@@ -19,14 +19,12 @@ import com.google.android.material.chip.ChipGroup
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
-import com.openclassrooms.realestatemanager.data.model.Place
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.form.ImageBottomSheetDialogFragment
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.math.RoundingMode
 import java.util.*
 
 
@@ -66,23 +64,7 @@ class Utils {
         const val DROPDOWN_STATUS = "STATUS"
         const val DROPDOWN_TYPE = "TYPE"
 
-        /**
-         * LIST CONSTANTS
-         */
-        const val FILTER_STATUS = 0
-        const val FILTER_AGENT = 1
-        const val FILTER_TYPE = 2
-        const val FILTER_PRICE = 3
-        const val FILTER_SURFACE = 4
-
         //### UTILS FUNCTIONS ###//
-        /**
-         * Convert euros to dollars
-         */
-        fun convertEuroToDollar(euros: Double): Double {
-            val number: Double = euros*1.21
-            return number.toBigDecimal().setScale(2, RoundingMode.HALF_UP).toDouble()
-        }
 
         /**
          * Method to save an image to internal storage
@@ -223,7 +205,7 @@ class Utils {
                 marker = "&markers=color:green%7C"+latLng.latitude+","+latLng.longitude
             }
 
-            return "https://maps.googleapis.com/maps/api/staticmap?center=" + address + "&zoom=18&size=600x300&maptype=roadmap&key=" + googleApi+marker
+            return "https://maps.googleapis.com/maps/api/staticmap?center=$address&zoom=18&size=600x300&maptype=roadmap&key=$googleApi$marker"
         }
 
         /**

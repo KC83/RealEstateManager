@@ -1,4 +1,4 @@
-package com.openclassrooms.realestatemanager.utils
+package com.openclassrooms.realestatemanager.utils.tools
 
 import java.math.RoundingMode
 import kotlin.math.pow

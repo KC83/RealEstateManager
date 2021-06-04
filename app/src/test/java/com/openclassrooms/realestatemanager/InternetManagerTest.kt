@@ -3,7 +3,7 @@ package com.openclassrooms.realestatemanager
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import com.openclassrooms.realestatemanager.utils.InternetManagerImpl
+import com.openclassrooms.realestatemanager.utils.tools.InternetManagerImpl
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
