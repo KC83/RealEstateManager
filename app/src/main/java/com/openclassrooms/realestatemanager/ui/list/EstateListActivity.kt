@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
-import android.widget.*
+import android.widget.RadioButton
+import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -22,12 +24,14 @@ import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
-import com.openclassrooms.realestatemanager.di.Injection
 import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
-import com.openclassrooms.realestatemanager.utils.*
+import com.openclassrooms.realestatemanager.utils.ChipItem
+import com.openclassrooms.realestatemanager.utils.SearchItem
+import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.utils.tools.*
+import org.koin.android.ext.android.inject
 import java.util.*
 
 class EstateListActivity : AppCompatActivity() {
@@ -38,9 +42,7 @@ class EstateListActivity : AppCompatActivity() {
     private val clock: Clock by lazy {
         ClockImpl()
     }
-    private val internetManager: InternetManager by lazy {
-        Injection.provideInternetManager(this)
-    }
+    private val internetManager: InternetManager by inject()
     private val loan: Loan by lazy {
         LoanImpl()
     }

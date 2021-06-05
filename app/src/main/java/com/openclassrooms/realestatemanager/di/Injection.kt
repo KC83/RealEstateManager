@@ -1,9 +1,9 @@
 package com.openclassrooms.realestatemanager.di
 
-import android.content.Context
 import com.openclassrooms.realestatemanager.utils.tools.InternetManager
 import com.openclassrooms.realestatemanager.utils.tools.InternetManagerImpl
+import org.koin.dsl.module
 
-object Injection {
-    fun provideInternetManager(context: Context): InternetManager = InternetManagerImpl(context)
+val module = module {
+    single<InternetManager> { InternetManagerImpl(get()) }
 }

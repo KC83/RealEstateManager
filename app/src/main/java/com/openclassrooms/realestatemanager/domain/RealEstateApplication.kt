@@ -2,9 +2,13 @@ package com.openclassrooms.realestatemanager.domain
 
 import android.app.Application
 import com.openclassrooms.realestatemanager.data.RealEstateRoomDatabase
+import com.openclassrooms.realestatemanager.di.module
 import com.openclassrooms.realestatemanager.domain.repository.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 
 class RealEstateApplication : Application() {
     private val applicationScope = CoroutineScope(SupervisorJob())
@@ -33,5 +37,14 @@ class RealEstateApplication : Application() {
     }
     val estateImageRepository by lazy {
         EstateImageRepository(database.estateImageDao())
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        startKoin {
+            androidLogger()
+            androidContext(this@RealEstateApplication)
+            modules(module)
+        }
     }
 }
