@@ -6,16 +6,13 @@ import com.openclassrooms.realestatemanager.di.module
 import com.openclassrooms.realestatemanager.domain.repository.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 
 class RealEstateApplication : Application() {
-    private val applicationScope = CoroutineScope(SupervisorJob())
-
-    private val database by lazy {
-        RealEstateRoomDatabase.getDatabase(this, applicationScope)
-    }
+    private val database: RealEstateRoomDatabase by inject()
 
     val agentRepository by lazy {
         AgentRepository(database.agentDao())

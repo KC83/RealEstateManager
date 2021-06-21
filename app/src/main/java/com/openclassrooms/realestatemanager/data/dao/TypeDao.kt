@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.data.dao
 
+import android.database.Cursor
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -9,6 +10,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TypeDao {
+    @Query("SELECT * FROM type")
+    fun getTypesWithCursor(): Cursor
+
     @Query("SELECT * FROM type ORDER BY name")
     fun getTypes(): Flow<List<Type>>
 

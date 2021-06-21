@@ -60,13 +60,13 @@
     <string name="internet_connected">Vous êtes connecté à internet !</string>
     <string name="internet_disconnected">Vous n\'êtes pas connecté à internet !</string>
     <string name="dollar">$</string>
-    <string name="rooms">\" pièce(s)\"</string>
-    <string name="bedrooms">\" chambre(s)\"</string>
-    <string name="bathrooms">\" salle(s) de bain\"</string>
-    <string name="add_the">\"Ajouté le \"</string>
-    <string name="sale_the">\"Vendu le \"</string>
+    <string name="rooms">pièce(s)</string>
+    <string name="bedrooms">chambre(s)</string>
+    <string name="bathrooms">salle(s) de bain</string>
+    <string name="add_the">Ajouté le</string>
+    <string name="sale_the">Vendu le</string>
     <string name="not_sold">Non vendu</string>
-    <string name="agent_fragment">\"Agent : \"</string>
+    <string name="agent_fragment">Agent :</string>
     <string name="no_image">Pas d\'image</string>
     <string name="add_description">Ajouter une description</string>
     <string name="enter_description_image">Merci de renseigner une description pour cette image</string>
@@ -74,5 +74,6 @@
     <string name="enter_description">Merci de renseigner une description</string>
     <string name="sale">Vendu</string>
     <string name="image_saved">Image enregistrée</string>
+    <string name="meter">m²</string>
 
 </resources>

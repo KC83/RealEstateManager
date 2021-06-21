@@ -41,24 +41,24 @@ class EstateDetailFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.estate_detail, container, false)
         item?.let {
             rootView.findViewById<TextView>(R.id.detail_status).text = it.status.name
-            rootView.findViewById<TextView>(R.id.detail_price).text = it.estate.price.toString().plus(getString(R.string.dollar))
+            rootView.findViewById<TextView>(R.id.detail_price).text = it.estate.price.toString().plus(" ").plus(getString(R.string.dollar))
             rootView.findViewById<TextView>(R.id.detail_type).text = it.type.name
-            rootView.findViewById<TextView>(R.id.detail_surface).text = it.estate.surface.toString().plus(" m²")
-            rootView.findViewById<TextView>(R.id.detail_rooms).text = it.estate.numberRooms.toString().plus(getString(R.string.rooms))
-            rootView.findViewById<TextView>(R.id.detail_bedrooms).text = it.estate.numberBedrooms.toString().plus(getString(R.string.bedrooms))
-            rootView.findViewById<TextView>(R.id.detail_bathrooms).text = it.estate.numberBathrooms.toString().plus(getString(R.string.bathrooms))
+            rootView.findViewById<TextView>(R.id.detail_surface).text = it.estate.surface.toString().plus(" ").plus(getString(R.string.meter))
+            rootView.findViewById<TextView>(R.id.detail_rooms).text = it.estate.numberRooms.toString().plus(" ").plus(getString(R.string.rooms))
+            rootView.findViewById<TextView>(R.id.detail_bedrooms).text = it.estate.numberBedrooms.toString().plus(" ").plus(getString(R.string.bedrooms))
+            rootView.findViewById<TextView>(R.id.detail_bathrooms).text = it.estate.numberBathrooms.toString().plus(" ").plus(getString(R.string.bathrooms))
             rootView.findViewById<TextView>(R.id.detail_description).text = it.estate.description
             rootView.findViewById<TextView>(R.id.detail_location).text = it.estate.location
             rootView.findViewById<TextView>(R.id.detail_zip_code).text = it.estate.zipCode
             rootView.findViewById<TextView>(R.id.detail_city).text = it.estate.city
             rootView.findViewById<TextView>(R.id.detail_country).text = it.estate.country
-            rootView.findViewById<TextView>(R.id.detail_insert_date).text =  String().plus(getString(R.string.add_the)).plus(it.estate.insertDate)
+            rootView.findViewById<TextView>(R.id.detail_insert_date).text =  String().plus(getString(R.string.add_the)).plus(" ").plus(it.estate.insertDate)
             if (it.estate.saleDate.isNotEmpty()) {
-                rootView.findViewById<TextView>(R.id.detail_sale_date).text =  String().plus(getString(R.string.sale_the)).plus(it.estate.saleDate)
+                rootView.findViewById<TextView>(R.id.detail_sale_date).text =  String().plus(getString(R.string.sale_the)).plus(" ").plus(it.estate.saleDate)
             } else {
                 rootView.findViewById<TextView>(R.id.detail_sale_date).text = String().plus(getString(R.string.not_sold))
             }
-            rootView.findViewById<TextView>(R.id.detail_agent).text = String().plus(getString(R.string.agent_fragment)).plus(it.agent.fullName)
+            rootView.findViewById<TextView>(R.id.detail_agent).text = String().plus(getString(R.string.agent_fragment)).plus(" ").plus(it.agent.fullName)
 
             // Maps
             if (!internetManager.isConnected()) {

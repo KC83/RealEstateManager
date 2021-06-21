@@ -16,7 +16,7 @@
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/detail_image_view_pager"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="350dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -180,7 +180,7 @@
             android:text="@string/location"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/detail_map_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/detail_description" />
         <!-- Location -->
@@ -192,7 +192,7 @@
             android:paddingRight="10dp"
             android:text="@string/location"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/detail_map_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/detail_location_title" />
         <!-- ZipCode -->
@@ -215,7 +215,7 @@
             android:paddingRight="10dp"
             android:text="@string/city"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/detail_map_image"
             app:layout_constraintStart_toEndOf="@+id/detail_zip_code"
             app:layout_constraintTop_toBottomOf="@+id/detail_location" />
         <!-- Country -->
@@ -227,22 +227,18 @@
             android:paddingRight="10dp"
             android:text="@string/country"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/detail_map_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/detail_zip_code" />
 
         <!-- Map -->
         <ImageView
             android:id="@+id/detail_map_image"
-            android:layout_width="0dp"
+            android:layout_width="500dp"
             android:layout_height="200dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="34dp"
             android:contentDescription="@string/location"
-            app:layout_constraintTop_toBottomOf="@+id/detail_country"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/detail_location_title" />
 
         <!-- ######################################### -->
 

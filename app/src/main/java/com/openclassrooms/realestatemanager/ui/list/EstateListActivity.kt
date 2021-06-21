@@ -20,6 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.data.RealEstateRoomDatabase
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
@@ -39,10 +40,11 @@ class EstateListActivity : AppCompatActivity() {
     private val estates: MutableList<EstateModel> = mutableListOf()
     private val searchItem: SearchItem = SearchItem()
 
+    private val internetManager: InternetManager by inject()
+
     private val clock: Clock by lazy {
         ClockImpl()
     }
-    private val internetManager: InternetManager by inject()
     private val loan: Loan by lazy {
         LoanImpl()
     }
