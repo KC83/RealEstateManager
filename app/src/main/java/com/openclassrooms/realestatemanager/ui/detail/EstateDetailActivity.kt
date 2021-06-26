@@ -3,6 +3,7 @@ package com.openclassrooms.realestatemanager.ui.detail
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ import com.openclassrooms.realestatemanager.utils.Utils
 
 class EstateDetailActivity : AppCompatActivity() {
     lateinit var estateModel: EstateModel
+    private var comeFromMaps: Boolean = false
 
     private val estateViewModel: EstateViewModel by viewModels {
         val app = application as RealEstateApplication
@@ -42,6 +44,7 @@ class EstateDetailActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) {
             estateModel = intent.getSerializableExtra(Utils.EXTRA_ESTATE_MODEL) as EstateModel
+            comeFromMaps = intent.getBooleanExtra(Utils.EXTRA_COME_FROM_MAP, false)
             showDetail(estateModel)
         }
 
@@ -123,13 +126,14 @@ class EstateDetailActivity : AppCompatActivity() {
         val fragment = EstateDetailFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel)
+                putBoolean(Utils.EXTRA_COME_FROM_MAP,comeFromMaps)
             }
         }
 
         supportFragmentManager.beginTransaction()
                 .replace(R.id.estate_detail_container, fragment)
                 .commit()
-        
+
         findViewById<FloatingActionButton>(R.id.estate_detail_button_form).setOnClickListener {
             val formIntent = Intent(this, EstateFormActivity::class.java)
             formIntent.putExtra(Utils.EXTRA_ESTATE_MODEL, estateModel)

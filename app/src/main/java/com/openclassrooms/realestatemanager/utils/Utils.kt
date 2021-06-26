@@ -53,6 +53,7 @@ class Utils {
         const val EXTRA_ESTATE_PLACE = "EXTRA_ESTATE_PLACE"
         const val EXTRA_LAT = "EXTRA_LAT"
         const val EXTRA_LNG = "EXTRA_LNG"
+        const val EXTRA_COME_FROM_MAP = "EXTRA_COME_FROM_MAP"
 
         /**
          * FORM CONSTANTS

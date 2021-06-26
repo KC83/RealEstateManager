@@ -198,24 +198,39 @@ class EstateListActivity : AppCompatActivity() {
             var ok = true
 
             if (searchItem.status.isNotEmpty()) {
+                var hasStatus = false
                 searchItem.status.forEach {
-                    if (estate.status.id.toInt() != it) {
-                        ok = false
+                    if (estate.status.id.toInt() == it) {
+                        hasStatus = true
                     }
+                }
+
+                if (!hasStatus) {
+                    ok = false
                 }
             }
             if (searchItem.types.isNotEmpty()) {
+                var hasType = false
                 searchItem.types.forEach {
-                    if (estate.type.id.toInt() != it) {
-                        ok = false
+                    if (estate.type.id.toInt() == it) {
+                        hasType = true
                     }
+                }
+
+                if (!hasType) {
+                    ok = false
                 }
             }
             if (searchItem.agents.isNotEmpty()) {
+                var hasAgent = false
                 searchItem.agents.forEach {
-                    if (estate.agent.id.toInt() != it) {
-                        ok = false
+                    if (estate.agent.id.toInt() == it) {
+                        hasAgent = true
                     }
+                }
+
+                if (!hasAgent) {
+                    ok = false
                 }
             }
             if (searchItem.places.isNotEmpty()) {

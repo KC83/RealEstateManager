@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.UiSettings
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.openclassrooms.realestatemanager.R
@@ -68,6 +69,7 @@ class MapFragment : Fragment() {
                     googleMap.setOnMarkerClickListener {
                         val intent = Intent(this.requireContext(), EstateDetailActivity::class.java).apply {
                             putExtra(Utils.EXTRA_ESTATE_MODEL, item as Serializable)
+                            putExtra(Utils.EXTRA_COME_FROM_MAP,true)
                         }
                         this.requireContext().startActivity(intent)
                         return@setOnMarkerClickListener true
