@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,9 @@ class EstateListAdapter(private val parentActivity: EstateListActivity,
                         .beginTransaction()
                         .replace(R.id.estate_detail_container, fragment)
                         .commit()
+
+                parentActivity.findViewById<FrameLayout>(R.id.estate_detail_container).visibility = View.VISIBLE
+                parentActivity.findViewById<TextView>(R.id.estate_detail_container_no_result).visibility = View.GONE
             } else {
                 val intent = Intent(v.context, EstateDetailActivity::class.java).apply {
                     putExtra(Utils.EXTRA_ESTATE_MODEL, item as Serializable)

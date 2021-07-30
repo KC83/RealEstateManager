@@ -23,7 +23,19 @@
         app:layoutManager="LinearLayoutManager"
         tools:context="com.openclassrooms.realestatemanager.ui.list.EstateListActivity"
         tools:listitem="@layout/estate_list_content"
-        android:background="@android:color/white" />
+        android:background="@android:color/white"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/estate_list_no_result"
+        android:layout_width="@dimen/item_width"
+        android:layout_height="match_parent"
+        android:text="@string/no_result"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"
+        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/estate_detail_container"
@@ -31,5 +43,17 @@
         android:layout_height="match_parent"
         android:layout_weight="3"
         android:paddingBottom="52dp"
-        android:background="@android:color/white" />
+        android:background="@android:color/white"
+        android:visibility="visible"/>
+
+    <TextView
+        android:id="@+id/estate_detail_container_no_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/no_selection"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textColor="@color/colorPrimary"
+        android:gravity="center"
+        android:visibility="gone" />
 </LinearLayout>

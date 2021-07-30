@@ -2,12 +2,14 @@ package com.openclassrooms.realestatemanager.ui.list
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
-import android.widget.RadioButton
-import android.widget.RelativeLayout
-import android.widget.Toast
+import android.view.View
+import android.widget.*
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +28,7 @@ import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.domain.RealEstateApplication
+import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
 import com.openclassrooms.realestatemanager.utils.ChipItem
@@ -33,6 +36,7 @@ import com.openclassrooms.realestatemanager.utils.SearchItem
 import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.utils.tools.*
 import org.koin.android.ext.android.inject
+import java.io.Serializable
 import java.util.*
 
 class EstateListActivity : AppCompatActivity() {
@@ -80,12 +84,15 @@ class EstateListActivity : AppCompatActivity() {
 
         if (findViewById<RelativeLayout>(R.id.estate_detail_container) != null) {
             twoPane = true
+
+            findViewById<FrameLayout>(R.id.estate_detail_container).visibility = View.GONE
+            findViewById<TextView>(R.id.estate_detail_container_no_result).visibility = View.VISIBLE
         }
 
         estateViewModel.allEstates.observe(this, {
             estates.clear()
             estates.addAll(it)
-            setupRecyclerView(findViewById(R.id.estate_list), getFilteredEstateModel(estates))
+            setupRecyclerView(findViewById(R.id.estate_list), getFilteredEstateModel(estates), true)
         })
 
         val bottomAppBar = findViewById<BottomAppBar>(R.id.bottom_app_bar)
@@ -149,10 +156,18 @@ class EstateListActivity : AppCompatActivity() {
             }
         }
 
+        /*
+        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                Utils.saveEstate(result.data,this,estateViewModel,estateImageViewModel,estatePlaceViewModel)
+            }
+        }*/
+
         val btnAddEstate = findViewById<FloatingActionButton>(R.id.button_add_estate)
         btnAddEstate.setOnClickListener {
             val intent = Intent(this, EstateFormActivity::class.java)
-            startActivityForResult(intent, Utils.FORM_ACTIVITY_REQUEST)
+            startActivityForResult(intent,Utils.FORM_ACTIVITY_REQUEST)
+            //startForResult.launch(intent)
         }
     }
 
@@ -165,31 +180,47 @@ class EstateListActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == Utils.FORM_ACTIVITY_REQUEST && resultCode == Activity.RESULT_OK) {
-            val estate: Estate = data?.getSerializableExtra(Utils.EXTRA_ESTATE) as Estate
-
-            estateViewModel.estateId.observe(this, { estateId ->
-                // Images
-                val images: MutableList<EstateImage> = data.getSerializableExtra(Utils.EXTRA_ESTATE_IMAGE) as MutableList<EstateImage>
-                var idx = 0
-                images.forEach { image ->
-                    if (idx > 0) {
-                        estateImageViewModel.insert(EstateImage(estateId = estateId, uri = image.uri, name = image.name))
-                    }
-                    idx++
-                }
-
-                // Places
-                val placeIds: MutableList<Int> = data.getSerializableExtra(Utils.EXTRA_PLACE) as MutableList<Int>
-                placeIds.forEach { placeId ->
-                    estatePlaceViewModel.insert(EstatePlace(estateId = estateId, placeId = placeId.toLong()))
-                }
-            })
-            estateViewModel.insert(estate)
+            Utils.saveEstate(data,this,estateViewModel,estateImageViewModel,estatePlaceViewModel)
         }
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView, estatesModel: List<EstateModel>) {
+    private fun setupRecyclerView(recyclerView: RecyclerView, estatesModel: List<EstateModel>, checkVisibility: Boolean = false) {
         recyclerView.adapter = EstateListAdapter(this, estatesModel, twoPane)
+        if(estatesModel.isNotEmpty()) {
+            findViewById<RecyclerView>(R.id.estate_list).visibility = View.VISIBLE
+            findViewById<TextView>(R.id.estate_list_no_result).visibility = View.GONE
+        } else {
+            findViewById<RecyclerView>(R.id.estate_list).visibility = View.GONE
+            findViewById<TextView>(R.id.estate_list_no_result).visibility = View.VISIBLE
+        }
+
+        if (twoPane) {
+            var ok = true
+            if(checkVisibility) {
+                if (findViewById<FrameLayout>(R.id.estate_detail_container).visibility == View.VISIBLE) {
+                    ok = false
+                } else {
+                    estateViewModel.estateId.observe(this, { estateId ->
+                        estateViewModel.getEstateById(estateId).observe(this, { estateModel ->
+                            val fragment = EstateDetailFragment().apply {
+                                arguments = Bundle().apply {
+                                    putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel as Serializable)
+                                }
+                            }
+                            this.supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.estate_detail_container, fragment)
+                                .commit()
+                        })
+                    })
+                }
+            }
+
+            if (ok) {
+                findViewById<FrameLayout>(R.id.estate_detail_container).visibility = View.GONE
+                findViewById<TextView>(R.id.estate_detail_container_no_result).visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun getFilteredEstateModel(estatesModel: List<EstateModel>): List<EstateModel> {

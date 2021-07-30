@@ -37,6 +37,8 @@ import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 class EstateFormActivity : AppCompatActivity() {
+    private var setupForm = false
+    private var estateModel: EstateModel? = null
     private val estateImages: MutableList<EstateImage> = mutableListOf()
     // Images already saved, use to know if a image is deleted
     private val images: MutableList<EstateImage> = mutableListOf()
@@ -58,12 +60,7 @@ class EstateFormActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estate_form)
 
-        val estateModel = intent.getSerializableExtra(Utils.EXTRA_ESTATE_MODEL) as EstateModel?
-
-        // Set dropdown
-        setDropdown(this, R.id.form_autocomplete_status, getListDropdownItem(Utils.DROPDOWN_STATUS))
-        setDropdown(this, R.id.form_autocomplete_agent, getListDropdownItem(Utils.DROPDOWN_AGENT))
-        setDropdown(this, R.id.form_autocomplete_type, getListDropdownItem(Utils.DROPDOWN_TYPE))
+        estateModel = intent.getSerializableExtra(Utils.EXTRA_ESTATE_MODEL) as EstateModel?
 
         // Add the sign "$" to the price
         val priceSlider = findViewById<Slider>(R.id.form_slider_price)
@@ -79,35 +76,8 @@ class EstateFormActivity : AppCompatActivity() {
         // Set images
         setImageRecyclerView(View(this))
 
-        // Get chipGroup
-        val chipGroup: ChipGroup = findViewById(R.id.form_chip_group)
-        // Set chips for the points of interest
-        placeViewModel.allPlaces.observe(this, { allPlaces ->
-            allPlaces.forEach { place ->
-                var isChecked = false
-                if (estateModel != null) {
-                    if (estateModel.estatePlaces.isNotEmpty()) {
-                        estateModel.estatePlaces.forEach { estatePlace ->
-                            if (estatePlace.placeId == place.id) {
-                                isChecked = true
-                            }
-                        }
-                    }
-                }
-
-                val chipItem = ChipItem(place.id.toInt(), place.name, place.logo)
-                Utils.addChip(this, chipGroup, chipItem, false, isChecked)
-            }
-        })
-
-        if (estateModel != null) {
-            setValues(estateModel)
-        }
-
-        val btnSave = findViewById<Button>(R.id.form_btn_save)
-        btnSave.setOnClickListener {
-            saveButton(estateModel, chipGroup)
-        }
+        // Set form
+        setupForm()
     }
 
     //### SETUP FORM ###
@@ -278,6 +248,47 @@ class EstateFormActivity : AppCompatActivity() {
             val pager = this.findViewById<ViewPager>(R.id.form_image_view_pager)
             val imageViewPagerAdapter = ImageViewPagerAdapter(this, estateImages, this, View(this), pager)
             pager.adapter = imageViewPagerAdapter
+        }
+    }
+    /**
+     * Set form
+     */
+    private fun setupForm() {
+        if (!setupForm) {
+            // Set dropdown
+            setDropdown(this, R.id.form_autocomplete_status, getListDropdownItem(Utils.DROPDOWN_STATUS))
+            setDropdown(this, R.id.form_autocomplete_agent, getListDropdownItem(Utils.DROPDOWN_AGENT))
+            setDropdown(this, R.id.form_autocomplete_type, getListDropdownItem(Utils.DROPDOWN_TYPE))
+
+            // Get chipGroup
+            val chipGroup: ChipGroup = findViewById(R.id.form_chip_group)
+            // Set chips for the points of interest
+            placeViewModel.allPlaces.observe(this, { allPlaces ->
+                allPlaces.forEach { place ->
+                    var isChecked = false
+                    if (estateModel != null) {
+                        if (estateModel!!.estatePlaces.isNotEmpty()) {
+                            estateModel!!.estatePlaces.forEach { estatePlace ->
+                                if (estatePlace.placeId == place.id) {
+                                    isChecked = true
+                                }
+                            }
+                        }
+                    }
+
+                    val chipItem = ChipItem(place.id.toInt(), place.name, place.logo)
+                    Utils.addChip(this, chipGroup, chipItem, false, isChecked)
+                }
+            })
+
+            estateModel?.let { setValues(it) }
+
+            val btnSave = findViewById<Button>(R.id.form_btn_save)
+            btnSave.setOnClickListener {
+                saveButton(estateModel, chipGroup)
+            }
+
+            setupForm = true
         }
     }
 

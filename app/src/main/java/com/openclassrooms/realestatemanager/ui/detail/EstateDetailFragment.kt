@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.detail
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,14 +9,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.openclassrooms.realestatemanager.R
+import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
+import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.form.ImageViewPagerAdapter
 import com.openclassrooms.realestatemanager.utils.ChipItem
@@ -28,6 +34,7 @@ import java.io.File
 class EstateDetailFragment : Fragment() {
     private var item: EstateModel? = null
     private var comeFromMaps: Boolean = false
+    private var twoPane: Boolean = false
     private val internetManager: InternetManager by lazy {
         InternetManagerImpl(this.requireContext())
     }
@@ -39,6 +46,10 @@ class EstateDetailFragment : Fragment() {
             if (it.containsKey(Utils.EXTRA_ESTATE_MODEL)) {
                 item = it.getSerializable(Utils.EXTRA_ESTATE_MODEL) as EstateModel
                 comeFromMaps = it.getBoolean(Utils.EXTRA_COME_FROM_MAP,false)
+            }
+
+            if (it.containsKey(Utils.EXTRA_TWO_PANE)) {
+                twoPane = it.getBoolean(Utils.EXTRA_TWO_PANE,false)
             }
         }
     }
@@ -123,14 +134,22 @@ class EstateDetailFragment : Fragment() {
                 }
             }
 
-            if (comeFromMaps) {
+            if (comeFromMaps || twoPane) {
                 rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).visibility = View.INVISIBLE
             } else {
+                /*val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        EstateDetailActivity().saveEstate(result.data)
+                    }
+                }*/
+
                 val estateModel = it
                 rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).setOnClickListener {
                     val formIntent = Intent(this.context,EstateFormActivity::class.java)
                     formIntent.putExtra(Utils.EXTRA_ESTATE_MODEL, estateModel)
-                    startActivityForResult(formIntent, Utils.FORM_ACTIVITY_REQUEST)
+                    activity?.startActivityForResult(formIntent, Utils.FORM_ACTIVITY_REQUEST)
+
+                    //startForResult.launch(formIntent)
                 }
             }
         }

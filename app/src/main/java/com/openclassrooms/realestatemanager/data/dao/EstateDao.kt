@@ -13,6 +13,9 @@ interface EstateDao {
     @Query("SELECT * FROM estate ORDER BY insert_date")
     fun getEstates(): Flow<List<Estate>>
 
+    @Query("SELECT * FROM estate WHERE estate.id = :id")
+    fun getEstateById(id: Long): Flow<Estate>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(estate: Estate): Long
 

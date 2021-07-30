@@ -13,6 +13,10 @@ class EstateViewModel(private val repository: EstateRepository): ViewModel() {
     private val _estateId : MutableLiveData<Long> = MutableLiveData()
     val estateId : LiveData<Long> = _estateId
 
+    fun getEstateById(id: Long): LiveData<EstateModel> {
+        return repository.getEstateById(id)
+    }
+
     fun insert(estate: Estate) {
         viewModelScope.launch(Dispatchers.Default) {
             _estateId.postValue(repository.insert(estate))

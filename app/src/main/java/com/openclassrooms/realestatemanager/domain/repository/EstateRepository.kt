@@ -31,6 +31,19 @@ class EstateRepository(
         }.asLiveData()
     }
 
+    fun getEstateById(id: Long): LiveData<EstateModel> {
+        return estateDao.getEstateById(id).map { estate ->
+            val type = typeDao.getTypeById(estate.typeId)
+            val status = statusDao.getStatusById(estate.statusId)
+            val agent = agentDao.getAgentById(estate.agentId)
+            val images = estateImageDao.getImagesForAEstate(estate.id).toMutableList()
+            val estatePlaces = estatePlaceDao.getEstatePlacesForAEstate(estate.id).toMutableList()
+            val places = estatePlaceDao.getPlacesForAEstate(estate.id)
+
+            EstateModel(estate, type, status, agent, images, estatePlaces, places)
+        }.asLiveData()
+    }
+
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
     suspend fun insert(estate: Estate): Long {

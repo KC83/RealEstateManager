@@ -75,5 +75,7 @@
     <string name="sale">Vendu</string>
     <string name="image_saved">Image enregistrée</string>
     <string name="meter">m²</string>
+    <string name="no_result">Aucun résultat</string>
+    <string name="no_selection">Merci de sélectionner un bien pour l\'afficher</string>
 
 </resources>
