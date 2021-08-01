@@ -45,6 +45,7 @@ class EstateFormActivity : AppCompatActivity() {
 
     private val statusViewModel: StatusViewModel by viewModels {
         StatusViewModelFactory((application as RealEstateApplication).statusRepository)
+        StatusViewModelFactory((application as RealEstateApplication).statusRepository)
     }
     private val agentViewModel: AgentViewModel by viewModels {
         AgentViewModelFactory((application as RealEstateApplication).agentRepository)

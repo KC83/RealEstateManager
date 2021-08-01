@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
@@ -127,6 +128,9 @@ class Utils {
                         estatePlaceViewModel.delete(estatePlace)
                     }
                 }
+
+                // Toast when the estate is saved
+                Toast.makeText(lifecycleOwner as Context, R.string.form_save, Toast.LENGTH_LONG).show()
             })
             estateViewModel.insert(estate)
         }
