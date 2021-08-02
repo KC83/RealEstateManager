@@ -41,7 +41,6 @@ import java.util.*
 
 class EstateListActivity : AppCompatActivity() {
     private var twoPane: Boolean = false
-    private val estates: MutableList<EstateModel> = mutableListOf()
     private val searchItem: SearchItem = SearchItem()
 
     private val internetManager: InternetManager by inject()
@@ -89,11 +88,7 @@ class EstateListActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.estate_detail_container_no_result).visibility = View.VISIBLE
         }
 
-        estateViewModel.allEstates.observe(this, {
-            estates.clear()
-            estates.addAll(it)
-            setupRecyclerView(findViewById(R.id.estate_list), getFilteredEstateModel(estates), true)
-        })
+        setupRecyclerView(findViewById(R.id.estate_list), true)
 
         val bottomAppBar = findViewById<BottomAppBar>(R.id.bottom_app_bar)
         setSupportActionBar(bottomAppBar)
@@ -156,13 +151,6 @@ class EstateListActivity : AppCompatActivity() {
             }
         }
 
-        /*
-        val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                Utils.saveEstate(result.data,this,estateViewModel,estateImageViewModel,estatePlaceViewModel)
-            }
-        }*/
-
         val btnAddEstate = findViewById<FloatingActionButton>(R.id.button_add_estate)
         btnAddEstate.setOnClickListener {
             val intent = Intent(this, EstateFormActivity::class.java)
@@ -184,127 +172,48 @@ class EstateListActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupRecyclerView(recyclerView: RecyclerView, estatesModel: List<EstateModel>, checkVisibility: Boolean = false) {
-        recyclerView.adapter = EstateListAdapter(this, estatesModel, twoPane)
-        if(estatesModel.isNotEmpty()) {
-            findViewById<RecyclerView>(R.id.estate_list).visibility = View.VISIBLE
-            findViewById<TextView>(R.id.estate_list_no_result).visibility = View.GONE
-        } else {
-            findViewById<RecyclerView>(R.id.estate_list).visibility = View.GONE
-            findViewById<TextView>(R.id.estate_list_no_result).visibility = View.VISIBLE
-        }
+    private fun setupRecyclerView(recyclerView: RecyclerView, checkVisibility: Boolean = false) {
+        // Get filtered estates
+        estateViewModel.getFilteredEstates(searchItem).observe(this, { estatesModel ->
+            // Set recyclerView
+            recyclerView.adapter = EstateListAdapter(this, estatesModel, twoPane)
 
-        if (twoPane) {
-            var ok = true
-            if(checkVisibility) {
-                if (findViewById<FrameLayout>(R.id.estate_detail_container).visibility == View.VISIBLE) {
-                    ok = false
-                } else {
-                    estateViewModel.estateId.observe(this, { estateId ->
-                        estateViewModel.getEstateById(estateId).observe(this, { estateModel ->
-                            val fragment = EstateDetailFragment().apply {
-                                arguments = Bundle().apply {
-                                    putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel as Serializable)
+            if(estatesModel.isNotEmpty()) {
+                findViewById<RecyclerView>(R.id.estate_list).visibility = View.VISIBLE
+                findViewById<TextView>(R.id.estate_list_no_result).visibility = View.GONE
+            } else {
+                findViewById<RecyclerView>(R.id.estate_list).visibility = View.GONE
+                findViewById<TextView>(R.id.estate_list_no_result).visibility = View.VISIBLE
+            }
+
+            if (twoPane) {
+                var ok = true
+                if(checkVisibility) {
+                    if (findViewById<FrameLayout>(R.id.estate_detail_container).visibility == View.VISIBLE) {
+                        ok = false
+                    } else {
+                        estateViewModel.estateId.observe(this, { estateId ->
+                            estateViewModel.getEstateById(estateId).observe(this, { estateModel ->
+                                val fragment = EstateDetailFragment().apply {
+                                    arguments = Bundle().apply {
+                                        putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel as Serializable)
+                                    }
                                 }
-                            }
-                            this.supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.estate_detail_container, fragment)
-                                .commit()
+                                this.supportFragmentManager
+                                    .beginTransaction()
+                                    .replace(R.id.estate_detail_container, fragment)
+                                    .commit()
+                            })
                         })
-                    })
-                }
-            }
-
-            if (ok) {
-                findViewById<FrameLayout>(R.id.estate_detail_container).visibility = View.GONE
-                findViewById<TextView>(R.id.estate_detail_container_no_result).visibility = View.VISIBLE
-            }
-        }
-    }
-
-    private fun getFilteredEstateModel(estatesModel: List<EstateModel>): List<EstateModel> {
-        val filterEstates: MutableList<EstateModel> = mutableListOf()
-        estatesModel.forEach { estate ->
-            var ok = true
-
-            if (searchItem.status.isNotEmpty()) {
-                var hasStatus = false
-                searchItem.status.forEach {
-                    if (estate.status.id.toInt() == it) {
-                        hasStatus = true
                     }
                 }
 
-                if (!hasStatus) {
-                    ok = false
+                if (ok) {
+                    findViewById<FrameLayout>(R.id.estate_detail_container).visibility = View.GONE
+                    findViewById<TextView>(R.id.estate_detail_container_no_result).visibility = View.VISIBLE
                 }
             }
-            if (searchItem.types.isNotEmpty()) {
-                var hasType = false
-                searchItem.types.forEach {
-                    if (estate.type.id.toInt() == it) {
-                        hasType = true
-                    }
-                }
-
-                if (!hasType) {
-                    ok = false
-                }
-            }
-            if (searchItem.agents.isNotEmpty()) {
-                var hasAgent = false
-                searchItem.agents.forEach {
-                    if (estate.agent.id.toInt() == it) {
-                        hasAgent = true
-                    }
-                }
-
-                if (!hasAgent) {
-                    ok = false
-                }
-            }
-            if (searchItem.places.isNotEmpty()) {
-                if (estate.estatePlaces.isNotEmpty()) {
-                    searchItem.places.forEach {
-                        var hasPlace = false
-                        estate.estatePlaces.forEach { estatePlace ->
-                            if (estatePlace.placeId.toInt() == it) {
-                                hasPlace = true
-                            }
-                        }
-
-                        if (!hasPlace) {
-                            ok = false
-                        }
-                    }
-                } else {
-                    ok = false
-                }
-            }
-            if (searchItem.price != 0.0) {
-                if (estate.estate.price.toDouble() != searchItem.price) {
-                    ok = false
-                }
-            }
-            if (searchItem.surface != 0.0) {
-                if (estate.estate.surface.toDouble() != searchItem.surface) {
-                    ok = false
-                }
-            }
-            if (searchItem.city.isNotEmpty()) {
-                if (estate.estate.city.toLowerCase(Locale.getDefault()) != searchItem.city.toLowerCase(
-                        Locale.getDefault())) {
-                    ok = false
-                }
-            }
-
-            if (ok) {
-                filterEstates.add(estate)
-            }
-        }
-
-        return filterEstates
+        })
     }
 
     private fun convertAlert() {
@@ -485,7 +394,7 @@ class EstateListActivity : AppCompatActivity() {
                 searchItem.city = city.text.toString()
             }
 
-            setupRecyclerView(findViewById(R.id.estate_list), getFilteredEstateModel(estates))
+            setupRecyclerView(findViewById(R.id.estate_list))
             dialog.dismiss()
         }
         dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener {

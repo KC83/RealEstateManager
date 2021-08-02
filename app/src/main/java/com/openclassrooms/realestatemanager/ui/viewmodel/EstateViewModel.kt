@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.domain.repository.*
+import com.openclassrooms.realestatemanager.utils.SearchItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -15,6 +16,10 @@ class EstateViewModel(private val repository: EstateRepository): ViewModel() {
 
     fun getEstateById(id: Long): LiveData<EstateModel> {
         return repository.getEstateById(id)
+    }
+
+    fun getFilteredEstates(searchItem: SearchItem): LiveData<List<EstateModel>> {
+        return repository.getFilteredEstates(searchItem)
     }
 
     fun insert(estate: Estate) {
