@@ -60,6 +60,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.openclassrooms.realestatemanager.ui.list.EstateListActivity" />
         </activity>
+        <activity
+            android:name=".utils.OldMainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
