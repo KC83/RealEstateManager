@@ -10,7 +10,18 @@ interface EstateDao {
     @Query("SELECT * FROM estate")
     fun getEstatesWithCursor(): Cursor
 
-    @Query("SELECT * FROM estate LEFT OUTER JOIN estate_place ON estate_place.estate_id = estate.id WHERE (:statusString = '' OR status_id IN(:status)) AND (:typesString = '' OR type_id IN(:types)) AND (:agentsString = '' OR agent_id IN(:agents)) AND (:placesString = '' OR place_id IN(:places)) AND (:price = 0.0 OR price = :price) AND (:surface = 0.0 OR surface = :surface) AND (:city LIKE '' OR city LIKE :city) GROUP BY estate.id ORDER BY insert_date")
+    @Query("SELECT estate.* " +
+                 "FROM estate " +
+                    "LEFT OUTER JOIN estate_place ON estate_place.estate_id = estate.id " +
+                 "WHERE (:statusString = '' OR status_id IN(:status)) " +
+                    "AND (:typesString = '' OR type_id IN(:types)) " +
+                    "AND (:agentsString = '' OR agent_id IN(:agents)) " +
+                    "AND (:placesString = '' OR place_id IN(:places)) " +
+                    "AND (:price = 0.0 OR price = :price) " +
+                    "AND (:surface = 0.0 OR surface = :surface) " +
+                    "AND (:city LIKE '' OR city LIKE :city) " +
+                 "GROUP BY estate.id " +
+                 "ORDER BY insert_date")
     fun getEstates(statusString: String = "", status: List<Int> = mutableListOf(),
                    typesString: String = "", types: List<Int> = mutableListOf(),
                    agentsString: String = "", agents: List<Int> = mutableListOf(),
