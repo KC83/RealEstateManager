@@ -17,6 +17,7 @@ import androidx.activity.viewModels
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.size
 import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.chip.ChipGroup
@@ -93,27 +94,36 @@ class EstateFormActivity : AppCompatActivity() {
     /**
      * Get the dropdown items
      */
-    private fun getListDropdownItem(inputType: String): List<DropdownItem> {
+    private fun getListDropdownItem(@IdRes id: Int, inputType: String): List<DropdownItem> {
         val list: MutableList<DropdownItem> = ArrayList()
         when (inputType) {
             Utils.DROPDOWN_AGENT -> {
                 agentViewModel.allAgents.observe(this, { allAgents ->
-                    allAgents.forEach { agent ->
-                        list.add(DropdownItem(agent.fullName))
+                    val dropdown = findViewById<AutoCompleteTextView>(id)
+                    if (dropdown.adapter.count == 0) {
+                        allAgents.forEach { agent ->
+                            list.add(DropdownItem(agent.fullName))
+                        }
                     }
                 })
             }
             Utils.DROPDOWN_STATUS -> {
                 statusViewModel.allStatus.observe(this, { allStatus ->
-                    allStatus.forEach { status ->
-                        list.add(DropdownItem(status.name))
+                    val dropdown = findViewById<AutoCompleteTextView>(id)
+                    if (dropdown.adapter.count == 0) {
+                        allStatus.forEach { status ->
+                            list.add(DropdownItem(status.name))
+                        }
                     }
                 })
             }
             Utils.DROPDOWN_TYPE -> {
                 typeViewModel.allTypes.observe(this, { allTypes ->
-                    allTypes.forEach { type ->
-                        list.add(DropdownItem(type.name))
+                    val dropdown = findViewById<AutoCompleteTextView>(id)
+                    if (dropdown.adapter.count == 0) {
+                        allTypes.forEach { type ->
+                            list.add(DropdownItem(type.name))
+                        }
                     }
                 })
             }
@@ -257,28 +267,30 @@ class EstateFormActivity : AppCompatActivity() {
     private fun setupForm() {
         if (!setupForm) {
             // Set dropdown
-            setDropdown(this, R.id.form_autocomplete_status, getListDropdownItem(Utils.DROPDOWN_STATUS))
-            setDropdown(this, R.id.form_autocomplete_agent, getListDropdownItem(Utils.DROPDOWN_AGENT))
-            setDropdown(this, R.id.form_autocomplete_type, getListDropdownItem(Utils.DROPDOWN_TYPE))
+            setDropdown(this, R.id.form_autocomplete_status, getListDropdownItem(R.id.form_autocomplete_status, Utils.DROPDOWN_STATUS))
+            setDropdown(this, R.id.form_autocomplete_agent, getListDropdownItem(R.id.form_autocomplete_agent, Utils.DROPDOWN_AGENT))
+            setDropdown(this, R.id.form_autocomplete_type, getListDropdownItem(R.id.form_autocomplete_type, Utils.DROPDOWN_TYPE))
 
             // Get chipGroup
             val chipGroup: ChipGroup = findViewById(R.id.form_chip_group)
             // Set chips for the points of interest
             placeViewModel.allPlaces.observe(this, { allPlaces ->
-                allPlaces.forEach { place ->
-                    var isChecked = false
-                    if (estateModel != null) {
-                        if (estateModel!!.estatePlaces.isNotEmpty()) {
-                            estateModel!!.estatePlaces.forEach { estatePlace ->
-                                if (estatePlace.placeId == place.id) {
-                                    isChecked = true
+                if(chipGroup.size == 0) {
+                    allPlaces.forEach { place ->
+                        var isChecked = false
+                        if (estateModel != null) {
+                            if (estateModel!!.estatePlaces.isNotEmpty()) {
+                                estateModel!!.estatePlaces.forEach { estatePlace ->
+                                    if (estatePlace.placeId == place.id) {
+                                        isChecked = true
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    val chipItem = ChipItem(place.id.toInt(), place.name, place.logo)
-                    Utils.addChip(this, chipGroup, chipItem, false, isChecked)
+                        val chipItem = ChipItem(place.id.toInt(), place.name, place.logo)
+                        Utils.addChip(this, chipGroup, chipItem, false, isChecked)
+                    }
                 }
             })
 
@@ -350,22 +362,22 @@ class EstateFormActivity : AppCompatActivity() {
      */
     private fun saveButton(estateModel: EstateModel?, chipGroup: ChipGroup) {
         var estate = Estate(
-                id = estateModel?.estate?.id ?: 0L,
-                statusId = getLongValue(R.id.form_autocomplete_status),
-                typeId = getLongValue(R.id.form_autocomplete_type),
-                agentId = getLongValue(R.id.form_autocomplete_agent),
-                insertDate = getStringValue(R.id.form_text_input_edit_insert_date),
-                saleDate = getStringValue(R.id.form_text_input_edit_sale_date),
-                price = getFloatValue(Utils.SLIDER, R.id.form_slider_price),
-                surface = getFloatValue(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_surface),
-                numberRooms = getIntValue(R.id.form_text_input_edit_rooms),
-                numberBathrooms = getIntValue(R.id.form_text_input_edit_bathrooms),
-                numberBedrooms = getIntValue(R.id.form_text_input_edit_bedrooms),
-                description = getStringValue(R.id.form_text_input_edit_description),
-                location = getStringValue(R.id.form_text_input_edit_location),
-                zipCode = getStringValue(R.id.form_text_input_edit_zip_code),
-                city = getStringValue(R.id.form_text_input_edit_city),
-                country = getStringValue(R.id.form_text_input_edit_country)
+            id = estateModel?.estate?.id ?: 0L,
+            statusId = getLongValue(R.id.form_autocomplete_status),
+            typeId = getLongValue(R.id.form_autocomplete_type),
+            agentId = getLongValue(R.id.form_autocomplete_agent),
+            insertDate = getStringValue(R.id.form_text_input_edit_insert_date),
+            saleDate = getStringValue(R.id.form_text_input_edit_sale_date),
+            price = getFloatValue(Utils.SLIDER, R.id.form_slider_price),
+            surface = getFloatValue(Utils.TEXT_INPUT_EDIT_TEXT, R.id.form_text_input_edit_surface),
+            numberRooms = getIntValue(R.id.form_text_input_edit_rooms),
+            numberBathrooms = getIntValue(R.id.form_text_input_edit_bathrooms),
+            numberBedrooms = getIntValue(R.id.form_text_input_edit_bedrooms),
+            description = getStringValue(R.id.form_text_input_edit_description),
+            location = getStringValue(R.id.form_text_input_edit_location),
+            zipCode = getStringValue(R.id.form_text_input_edit_zip_code),
+            city = getStringValue(R.id.form_text_input_edit_city),
+            country = getStringValue(R.id.form_text_input_edit_country)
         )
 
         // Check if inputs are not empty
@@ -376,24 +388,24 @@ class EstateFormActivity : AppCompatActivity() {
                 var mapUriString = ""
                 val src: String = Utils.getMapsURL(this, estate, getString(R.string.GOOGLE_API_KEY))
                 Picasso.get()
-                        .load(src)
-                        .into(
-                                object: com.squareup.picasso.Target {
-                                    override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
-                                        saveEstate(estateModel, estate, chipGroup)
-                                    }
-                                    override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
-                                    override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-                                        if (bitmap != null) {
-                                            val mapUri: Uri = Utils.saveImageToInternalStorage(bitmap,this@EstateFormActivity)
-                                            mapUriString = mapUri.toString()
-                                        }
-                                        estate = estate.copy(map_uri = mapUriString)
-
-                                        saveEstate(estateModel, estate, chipGroup)
-                                    }
+                    .load(src)
+                    .into(
+                        object: com.squareup.picasso.Target {
+                            override fun onBitmapFailed(e: java.lang.Exception?, errorDrawable: Drawable?) {
+                                saveEstate(estateModel, estate, chipGroup)
+                            }
+                            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+                            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                                if (bitmap != null) {
+                                    val mapUri: Uri = Utils.saveImageToInternalStorage(bitmap,this@EstateFormActivity)
+                                    mapUriString = mapUri.toString()
                                 }
-                        )
+                                estate = estate.copy(map_uri = mapUriString)
+
+                                saveEstate(estateModel, estate, chipGroup)
+                            }
+                        }
+                    )
             } else {
                 Toast.makeText(this, getString(R.string.error_image), Toast.LENGTH_LONG).show()
             }
