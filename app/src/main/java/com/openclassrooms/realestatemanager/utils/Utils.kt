@@ -87,50 +87,55 @@ class Utils {
          */
         fun saveEstate(data: Intent?, lifecycleOwner: LifecycleOwner, estateViewModel: EstateViewModel, estateImageViewModel: EstateImageViewModel, estatePlaceViewModel: EstatePlaceViewModel) {
             val estate: Estate = data?.getSerializableExtra(Utils.EXTRA_ESTATE) as Estate
+            var saved = false
 
             estateViewModel.estateId.observe(lifecycleOwner, { estateId ->
-                // Images
-                val estateImages: MutableList<EstateImage> = data.getSerializableExtra(EXTRA_ESTATE_IMAGE) as MutableList<EstateImage>
-                val images: MutableList<EstateImage> = data.getSerializableExtra(EXTRA_IMAGE) as MutableList<EstateImage>
-                val imagesToKeep: MutableList<Long> = mutableListOf()
+                if (!saved) {
+                    // Images
+                    val estateImages: MutableList<EstateImage> = data.getSerializableExtra(EXTRA_ESTATE_IMAGE) as MutableList<EstateImage>
+                    val images: MutableList<EstateImage> = data.getSerializableExtra(EXTRA_IMAGE) as MutableList<EstateImage>
+                    val imagesToKeep: MutableList<Long> = mutableListOf()
 
-                // Remove first image, it's the image for adding new images
-                estateImages.drop(1).forEach { image ->
-                    estateImageViewModel.insert(EstateImage(id = image.id, estateId = estateId, uri = image.uri, name = image.name))
-                    if (image.id > 0) {
-                        imagesToKeep.add(image.id)
+                    // Remove first image, it's the image for adding new images
+                    estateImages.drop(1).forEach { image ->
+                        estateImageViewModel.insert(EstateImage(id = image.id, estateId = estateId, uri = image.uri, name = image.name))
+                        if (image.id > 0) {
+                            imagesToKeep.add(image.id)
+                        }
                     }
-                }
-                // Delete estateImage if removed
-                images.forEach { estateImage ->
-                    if (!imagesToKeep.contains(estateImage.id)) {
-                        estateImageViewModel.delete(estateImage)
-                    }
-                }
-
-                // Places
-                val placeIds: MutableList<Int>? = data.getSerializableExtra(EXTRA_PLACE) as MutableList<Int>?
-                val estatePlaces: MutableList<EstatePlace>? = data.getSerializableExtra(EXTRA_ESTATE_PLACE) as MutableList<EstatePlace>?
-                val estatePlacesToKeep: MutableList<EstatePlace> = mutableListOf()
-                placeIds?.forEach { placeId ->
-                    // Get estate place already saved
-                    val estatePlace: EstatePlace? = estatePlaces?.firstOrNull { estatePlace -> estatePlace.placeId == placeId.toLong() }
-                    if (estatePlace != null) {
-                        estatePlacesToKeep.add(estatePlace)
+                    // Delete estateImage if removed
+                    images.forEach { estateImage ->
+                        if (!imagesToKeep.contains(estateImage.id)) {
+                            estateImageViewModel.delete(estateImage)
+                        }
                     }
 
-                    estatePlaceViewModel.insert(EstatePlace(id = estatePlace?.id ?: 0L, estateId = estateId, placeId = placeId.toLong()))
-                }
+                    // Places
+                    val placeIds: MutableList<Int>? = data.getSerializableExtra(EXTRA_PLACE) as MutableList<Int>?
+                    val estatePlaces: MutableList<EstatePlace>? = data.getSerializableExtra(EXTRA_ESTATE_PLACE) as MutableList<EstatePlace>?
+                    val estatePlacesToKeep: MutableList<EstatePlace> = mutableListOf()
+                    placeIds?.forEach { placeId ->
+                        // Get estate place already saved
+                        val estatePlace: EstatePlace? = estatePlaces?.firstOrNull { estatePlace -> estatePlace.placeId == placeId.toLong() }
+                        if (estatePlace != null) {
+                            estatePlacesToKeep.add(estatePlace)
+                        }
 
-                // Delete estatePlace if not checked
-                estatePlaces?.forEach { estatePlace ->
-                    if (!estatePlacesToKeep.contains(estatePlace)) {
-                        estatePlaceViewModel.delete(estatePlace)
+                        estatePlaceViewModel.insert(EstatePlace(id = estatePlace?.id ?: 0L, estateId = estateId, placeId = placeId.toLong()))
                     }
-                }
 
-                // Toast when the estate is saved
-                Toast.makeText(lifecycleOwner as Context, R.string.form_save, Toast.LENGTH_LONG).show()
+                    // Delete estatePlace if not checked
+                    estatePlaces?.forEach { estatePlace ->
+                        if (!estatePlacesToKeep.contains(estatePlace)) {
+                            estatePlaceViewModel.delete(estatePlace)
+                        }
+                    }
+
+                    saved = true
+
+                    // Toast when the estate is saved
+                    Toast.makeText(lifecycleOwner as Context, R.string.form_save, Toast.LENGTH_LONG).show()
+                }
             })
             estateViewModel.insert(estate)
         }
