@@ -11,20 +11,17 @@ import java.io.Serializable
                 ForeignKey(
                         entity = Status::class,
                         parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("status_id"),
-                        onDelete = ForeignKey.CASCADE
+                        childColumns = arrayOf("status_id")
                 ),
                 ForeignKey(
                         entity = Type::class,
                         parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("type_id"),
-                        onDelete = ForeignKey.CASCADE
+                        childColumns = arrayOf("type_id")
                 ),
                 ForeignKey(
                         entity = Agent::class,
                         parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("agent_id"),
-                        onDelete = ForeignKey.CASCADE
+                        childColumns = arrayOf("agent_id")
                 )
         )
 )

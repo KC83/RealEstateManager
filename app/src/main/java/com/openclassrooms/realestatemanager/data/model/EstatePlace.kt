@@ -11,14 +11,12 @@ import java.io.Serializable
                 ForeignKey(
                         entity = Estate::class,
                         parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("estate_id"),
-                        onDelete = ForeignKey.CASCADE
+                        childColumns = arrayOf("estate_id")
                 ),
                 ForeignKey(
                         entity = Place::class,
                         parentColumns = arrayOf("id"),
-                        childColumns = arrayOf("place_id"),
-                        onDelete = ForeignKey.CASCADE
+                        childColumns = arrayOf("place_id")
                 )
         ))
 data class EstatePlace(

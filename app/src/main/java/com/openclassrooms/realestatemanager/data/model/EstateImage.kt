@@ -8,8 +8,7 @@ import java.io.Serializable
             ForeignKey(
                 entity = Estate::class,
                 parentColumns = arrayOf("id"),
-                childColumns = arrayOf("estate_id"),
-                onDelete = ForeignKey.CASCADE
+                childColumns = arrayOf("estate_id")
             )
         ),
         indices = [Index(value = ["uri"], unique = true)]
