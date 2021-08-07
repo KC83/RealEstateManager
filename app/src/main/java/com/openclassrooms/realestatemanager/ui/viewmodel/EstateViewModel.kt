@@ -7,6 +7,7 @@ import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.domain.repository.*
+import com.openclassrooms.realestatemanager.utils.SearchItem
 import com.openclassrooms.realestatemanager.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,6 +24,10 @@ class EstateViewModel(private val repository: EstateRepository, private val esta
 
     fun delete(estate: Estate) {
         repository.delete(estate)
+    }
+
+    fun getFilteredEstates(searchItem: SearchItem): LiveData<List<EstateModel>> {
+        return repository.getFilteredEstates(searchItem)
     }
 
     fun getEstateById(id: Long): LiveData<EstateModel> {
