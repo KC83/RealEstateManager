@@ -17,11 +17,11 @@ interface EstateDao {
     fun getEstateById(id: Long): Flow<Estate>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(estate: Estate): Long
+    fun insert(estate: Estate): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertForTest(estate: Estate)
 
     @Delete
-    suspend fun delete(estate: Estate)
+    fun delete(estate: Estate)
 }

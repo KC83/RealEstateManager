@@ -24,7 +24,7 @@ class MapActivity : AppCompatActivity() {
 
     private val estateViewModel: EstateViewModel by viewModels {
         val app = application as RealEstateApplication
-        EstateViewModelFactory(app.estateRepository)
+        EstateViewModelFactory(app.estateRepository, app.estateImageRepository, app.estatePlaceRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

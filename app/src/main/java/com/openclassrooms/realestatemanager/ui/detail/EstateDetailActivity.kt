@@ -3,41 +3,29 @@ package com.openclassrooms.realestatemanager.ui.detail
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.RelativeLayout
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.model.Estate
-import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
-import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.domain.RealEstateApplication
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.list.EstateListActivity
-import com.openclassrooms.realestatemanager.ui.viewmodel.*
+import com.openclassrooms.realestatemanager.ui.viewmodel.EstateViewModel
+import com.openclassrooms.realestatemanager.ui.viewmodel.EstateViewModelFactory
 import com.openclassrooms.realestatemanager.utils.Utils
-import okhttp3.internal.Util
+import java.io.Serializable
 
 class EstateDetailActivity : AppCompatActivity() {
     lateinit var estateModel: EstateModel
-    lateinit var startForResult: ActivityResultLauncher<Intent>
     private var comeFromMaps: Boolean = false
 
     private val estateViewModel: EstateViewModel by viewModels {
         val app = application as RealEstateApplication
-        EstateViewModelFactory(app.estateRepository)
-    }
-    private val estateImageViewModel: EstateImageViewModel by viewModels {
-        EstateImageViewModelFactory((application as RealEstateApplication).estateImageRepository)
-    }
-    private val estatePlaceViewModel: EstatePlaceViewModel by viewModels {
-        EstatePlaceViewModelFactory((application as RealEstateApplication).estatePlaceRepository)
+        EstateViewModelFactory(app.estateRepository, app.estateImageRepository, app.estatePlaceRepository)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,13 +49,6 @@ class EstateDetailActivity : AppCompatActivity() {
                 }
             }
         })
-
-        /*
-        startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                Utils.saveEstate(result.data,this,estateViewModel,estateImageViewModel,estatePlaceViewModel)
-            }
-        }*/
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
@@ -82,7 +63,13 @@ class EstateDetailActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == Utils.FORM_ACTIVITY_REQUEST && resultCode == Activity.RESULT_OK) {
-            Utils.saveEstate(data,this,estateViewModel,estateImageViewModel,estatePlaceViewModel)
+            estateViewModel.estateId.observe(this, {
+                if (it > 0) {
+                    // Toast when the estate is saved
+                    Toast.makeText(this, R.string.form_save, Toast.LENGTH_LONG).show()
+                }
+            })
+            estateViewModel.saveEstate(data)
         }
     }
 
@@ -106,7 +93,6 @@ class EstateDetailActivity : AppCompatActivity() {
             val formIntent = Intent(this, EstateFormActivity::class.java)
             formIntent.putExtra(Utils.EXTRA_ESTATE_MODEL, estateModel)
             startActivityForResult(formIntent,Utils.FORM_ACTIVITY_REQUEST)
-            //startForResult.launch(formIntent)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.openclassrooms.realestatemanager.ui.list
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -28,6 +29,9 @@ import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
 import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.domain.RealEstateApplication
+import com.openclassrooms.realestatemanager.domain.repository.EstateImageRepository
+import com.openclassrooms.realestatemanager.domain.repository.EstatePlaceRepository
+import com.openclassrooms.realestatemanager.domain.repository.EstateRepository
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
@@ -57,13 +61,11 @@ class EstateListActivity : AppCompatActivity() {
     }
 
     private val estateViewModel: EstateViewModel by viewModels {
-        EstateViewModelFactory((application as RealEstateApplication).estateRepository)
-    }
-    private val estateImageViewModel: EstateImageViewModel by viewModels {
-        EstateImageViewModelFactory((application as RealEstateApplication).estateImageRepository)
-    }
-    private val estatePlaceViewModel: EstatePlaceViewModel by viewModels {
-        EstatePlaceViewModelFactory((application as RealEstateApplication).estatePlaceRepository)
+        EstateViewModelFactory(
+            (application as RealEstateApplication).estateRepository,
+            (application as RealEstateApplication).estateImageRepository,
+            (application as RealEstateApplication).estatePlaceRepository
+        )
     }
     private val placeViewModel: PlaceViewModel by viewModels {
         PlaceViewModelFactory((application as RealEstateApplication).placeRepository)
@@ -180,7 +182,27 @@ class EstateListActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == Utils.FORM_ACTIVITY_REQUEST && resultCode == Activity.RESULT_OK) {
-            Utils.saveEstate(data,this,estateViewModel,estateImageViewModel,estatePlaceViewModel)
+            estateViewModel.estateId.observe(this, {
+                if (it > 0) {
+                    // Toast when the estate is saved
+                    Toast.makeText(this, R.string.form_save, Toast.LENGTH_LONG).show()
+
+                    if (twoPane) {
+                        estateViewModel.getEstateById(it).observe(this, { estateModel ->
+                            val fragment = EstateDetailFragment().apply {
+                                arguments = Bundle().apply {
+                                    putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel as Serializable)
+                                }
+                            }
+                            this.supportFragmentManager
+                                .beginTransaction()
+                                .replace(R.id.estate_detail_container, fragment)
+                                .commit()
+                        })
+                    }
+                }
+            })
+            estateViewModel.saveEstate(data)
         }
     }
 
@@ -199,20 +221,6 @@ class EstateListActivity : AppCompatActivity() {
             if(checkVisibility) {
                 if (findViewById<FrameLayout>(R.id.estate_detail_container).visibility == View.VISIBLE) {
                     ok = false
-                } else {
-                    estateViewModel.estateId.observe(this, { estateId ->
-                        estateViewModel.getEstateById(estateId).observe(this, { estateModel ->
-                            val fragment = EstateDetailFragment().apply {
-                                arguments = Bundle().apply {
-                                    putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel as Serializable)
-                                }
-                            }
-                            this.supportFragmentManager
-                                .beginTransaction()
-                                .replace(R.id.estate_detail_container, fragment)
-                                .commit()
-                        })
-                    })
                 }
             }
 

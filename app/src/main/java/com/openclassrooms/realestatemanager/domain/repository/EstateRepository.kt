@@ -46,13 +46,13 @@ class EstateRepository(
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(estate: Estate): Long {
+    fun insert(estate: Estate): Long {
         return estateDao.insert(estate)
     }
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun delete(estate: Estate) {
+    fun delete(estate: Estate) {
         estateDao.delete(estate)
     }
 }

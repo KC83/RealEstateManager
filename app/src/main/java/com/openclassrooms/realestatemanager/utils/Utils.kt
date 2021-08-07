@@ -3,21 +3,15 @@ package com.openclassrooms.realestatemanager.utils
 import android.content.ContentResolver
 import android.content.Context
 import android.content.ContextWrapper
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.location.Address
 import android.location.Geocoder
 import android.net.Uri
-import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.LifecycleOwner
 import androidx.viewpager.widget.ViewPager
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.chip.Chip
@@ -25,20 +19,12 @@ import com.google.android.material.chip.ChipGroup
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
-import com.openclassrooms.realestatemanager.data.model.EstateModel
-import com.openclassrooms.realestatemanager.data.model.EstatePlace
-import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.form.ImageBottomSheetDialogFragment
-import com.openclassrooms.realestatemanager.ui.list.EstateListActivity
-import com.openclassrooms.realestatemanager.ui.viewmodel.EstateImageViewModel
-import com.openclassrooms.realestatemanager.ui.viewmodel.EstatePlaceViewModel
-import com.openclassrooms.realestatemanager.ui.viewmodel.EstateViewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
-import java.io.Serializable
 import java.util.*
 
 
@@ -81,64 +67,6 @@ class Utils {
         const val DROPDOWN_TYPE = "TYPE"
 
         //### UTILS FUNCTIONS ###//
-
-        /**
-         * Method to save an estate
-         */
-        fun saveEstate(data: Intent?, lifecycleOwner: LifecycleOwner, estateViewModel: EstateViewModel, estateImageViewModel: EstateImageViewModel, estatePlaceViewModel: EstatePlaceViewModel) {
-            val estate: Estate = data?.getSerializableExtra(Utils.EXTRA_ESTATE) as Estate
-            var saved = false
-
-            estateViewModel.estateId.observe(lifecycleOwner, { estateId ->
-                if (!saved) {
-                    // Images
-                    val estateImages: MutableList<EstateImage> = data.getSerializableExtra(EXTRA_ESTATE_IMAGE) as MutableList<EstateImage>
-                    val images: MutableList<EstateImage> = data.getSerializableExtra(EXTRA_IMAGE) as MutableList<EstateImage>
-                    val imagesToKeep: MutableList<Long> = mutableListOf()
-
-                    // Remove first image, it's the image for adding new images
-                    estateImages.drop(1).forEach { image ->
-                        estateImageViewModel.insert(EstateImage(id = image.id, estateId = estateId, uri = image.uri, name = image.name))
-                        if (image.id > 0) {
-                            imagesToKeep.add(image.id)
-                        }
-                    }
-                    // Delete estateImage if removed
-                    images.forEach { estateImage ->
-                        if (!imagesToKeep.contains(estateImage.id)) {
-                            estateImageViewModel.delete(estateImage)
-                        }
-                    }
-
-                    // Places
-                    val placeIds: MutableList<Int>? = data.getSerializableExtra(EXTRA_PLACE) as MutableList<Int>?
-                    val estatePlaces: MutableList<EstatePlace>? = data.getSerializableExtra(EXTRA_ESTATE_PLACE) as MutableList<EstatePlace>?
-                    val estatePlacesToKeep: MutableList<EstatePlace> = mutableListOf()
-                    placeIds?.forEach { placeId ->
-                        // Get estate place already saved
-                        val estatePlace: EstatePlace? = estatePlaces?.firstOrNull { estatePlace -> estatePlace.placeId == placeId.toLong() }
-                        if (estatePlace != null) {
-                            estatePlacesToKeep.add(estatePlace)
-                        }
-
-                        estatePlaceViewModel.insert(EstatePlace(id = estatePlace?.id ?: 0L, estateId = estateId, placeId = placeId.toLong()))
-                    }
-
-                    // Delete estatePlace if not checked
-                    estatePlaces?.forEach { estatePlace ->
-                        if (!estatePlacesToKeep.contains(estatePlace)) {
-                            estatePlaceViewModel.delete(estatePlace)
-                        }
-                    }
-
-                    saved = true
-
-                    // Toast when the estate is saved
-                    Toast.makeText(lifecycleOwner as Context, R.string.form_save, Toast.LENGTH_LONG).show()
-                }
-            })
-            estateViewModel.insert(estate)
-        }
 
         /**
          * Method to save an image to internal storage
