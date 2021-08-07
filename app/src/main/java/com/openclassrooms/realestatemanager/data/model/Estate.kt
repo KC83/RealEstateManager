@@ -2,10 +2,29 @@ package com.openclassrooms.realestatemanager.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
-@Entity(tableName = "estate")
+@Entity(tableName = "estate",
+        foreignKeys = arrayOf(
+                ForeignKey(
+                        entity = Status::class,
+                        parentColumns = arrayOf("id"),
+                        childColumns = arrayOf("status_id")
+                ),
+                ForeignKey(
+                        entity = Type::class,
+                        parentColumns = arrayOf("id"),
+                        childColumns = arrayOf("type_id")
+                ),
+                ForeignKey(
+                        entity = Agent::class,
+                        parentColumns = arrayOf("id"),
+                        childColumns = arrayOf("agent_id")
+                )
+        )
+)
 data class Estate(
         @PrimaryKey(autoGenerate = true) val id: Long = 0,
         @ColumnInfo(name = "status_id") val statusId: Long,

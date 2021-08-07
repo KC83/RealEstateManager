@@ -1,12 +1,18 @@
 package com.openclassrooms.realestatemanager.data.model
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 import java.io.Serializable
 
-@Entity(tableName = "estate_image", indices = [Index(value = ["uri"], unique = true)])
+@Entity(tableName = "estate_image",
+        foreignKeys = arrayOf(
+            ForeignKey(
+                entity = Estate::class,
+                parentColumns = arrayOf("id"),
+                childColumns = arrayOf("estate_id")
+            )
+        ),
+        indices = [Index(value = ["uri"], unique = true)]
+)
 data class EstateImage(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "estate_id") val estateId: Long,
