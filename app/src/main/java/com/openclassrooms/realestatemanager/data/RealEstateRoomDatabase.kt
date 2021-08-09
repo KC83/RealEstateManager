@@ -25,8 +25,8 @@ abstract class RealEstateRoomDatabase : RoomDatabase() {
     abstract fun typeDao(): TypeDao
 
     class RealEstateRoomDatabaseCallback(private val scope: CoroutineScope): RoomDatabase.Callback() {
-        override fun onOpen(db: SupportSQLiteDatabase) {
-            super.onOpen(db)
+        override fun onCreate(db: SupportSQLiteDatabase) {
+            super.onCreate(db)
             scope.launch {
                 // AGENTS
                 db.execSQL("DELETE FROM agent")

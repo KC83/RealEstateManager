@@ -1,16 +1,12 @@
 package com.openclassrooms.realestatemanager.ui.list
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.widget.*
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -23,15 +19,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.textfield.TextInputEditText
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.RealEstateRoomDatabase
-import com.openclassrooms.realestatemanager.data.model.Estate
-import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
-import com.openclassrooms.realestatemanager.data.model.EstatePlace
 import com.openclassrooms.realestatemanager.domain.RealEstateApplication
-import com.openclassrooms.realestatemanager.domain.repository.EstateImageRepository
-import com.openclassrooms.realestatemanager.domain.repository.EstatePlaceRepository
-import com.openclassrooms.realestatemanager.domain.repository.EstateRepository
 import com.openclassrooms.realestatemanager.ui.detail.EstateDetailFragment
 import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.*
@@ -41,11 +30,9 @@ import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.utils.tools.*
 import org.koin.android.ext.android.inject
 import java.io.Serializable
-import java.util.*
 
 class EstateListActivity : AppCompatActivity() {
     private var twoPane: Boolean = false
-    private val estates: MutableList<EstateModel> = mutableListOf()
     private val searchItem: SearchItem = SearchItem()
 
     private val internetManager: InternetManager by inject()
@@ -84,7 +71,7 @@ class EstateListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_estate_list)
 
-        if (findViewById<RelativeLayout>(R.id.estate_detail_container) != null) {
+        if (findViewById<TextView>(R.id.estate_detail_container_no_result) != null) {
             twoPane = true
 
             findViewById<FrameLayout>(R.id.estate_detail_container).visibility = View.GONE
@@ -158,7 +145,6 @@ class EstateListActivity : AppCompatActivity() {
         btnAddEstate.setOnClickListener {
             val intent = Intent(this, EstateFormActivity::class.java)
             startActivityForResult(intent,Utils.FORM_ACTIVITY_REQUEST)
-            //startForResult.launch(intent)
         }
     }
 

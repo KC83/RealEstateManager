@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.RelativeLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +17,6 @@ import com.openclassrooms.realestatemanager.ui.list.EstateListActivity
 import com.openclassrooms.realestatemanager.ui.viewmodel.EstateViewModel
 import com.openclassrooms.realestatemanager.ui.viewmodel.EstateViewModelFactory
 import com.openclassrooms.realestatemanager.utils.Utils
-import java.io.Serializable
 
 class EstateDetailActivity : AppCompatActivity() {
     lateinit var estateModel: EstateModel
@@ -79,7 +78,7 @@ class EstateDetailActivity : AppCompatActivity() {
                 putSerializable(Utils.EXTRA_ESTATE_MODEL, estateModel)
                 putBoolean(Utils.EXTRA_COME_FROM_MAP,comeFromMaps)
 
-                if (findViewById<RelativeLayout>(R.id.estate_detail_container) != null) {
+                if (findViewById<TextView>(R.id.estate_detail_container_no_result) != null) {
                     putBoolean(Utils.EXTRA_TWO_PANE,true)
                 }
             }

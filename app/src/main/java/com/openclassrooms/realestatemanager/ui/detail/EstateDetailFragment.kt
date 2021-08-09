@@ -1,33 +1,24 @@
 package com.openclassrooms.realestatemanager.ui.detail
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.openclassrooms.realestatemanager.R
-import com.openclassrooms.realestatemanager.data.model.Estate
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
-import com.openclassrooms.realestatemanager.data.model.EstatePlace
-import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.form.ImageViewPagerAdapter
 import com.openclassrooms.realestatemanager.utils.ChipItem
+import com.openclassrooms.realestatemanager.utils.Utils
 import com.openclassrooms.realestatemanager.utils.tools.InternetManager
 import com.openclassrooms.realestatemanager.utils.tools.InternetManagerImpl
-import com.openclassrooms.realestatemanager.utils.Utils
 import com.squareup.picasso.Picasso
 import java.io.File
 
@@ -136,21 +127,6 @@ class EstateDetailFragment : Fragment() {
 
             if (comeFromMaps || twoPane) {
                 rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).visibility = View.INVISIBLE
-            } else {
-                /*val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-                    if (result.resultCode == Activity.RESULT_OK) {
-                        EstateDetailActivity().saveEstate(result.data)
-                    }
-                }*/
-
-                val estateModel = it
-                rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).setOnClickListener {
-                    val formIntent = Intent(this.context,EstateFormActivity::class.java)
-                    formIntent.putExtra(Utils.EXTRA_ESTATE_MODEL, estateModel)
-                    activity?.startActivityForResult(formIntent, Utils.FORM_ACTIVITY_REQUEST)
-
-                    //startForResult.launch(formIntent)
-                }
             }
         }
         return rootView
