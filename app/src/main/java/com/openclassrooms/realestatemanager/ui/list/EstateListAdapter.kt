@@ -28,6 +28,7 @@ class EstateListAdapter(private val parentActivity: EstateListActivity,
                 val fragment = EstateDetailFragment().apply {
                     arguments = Bundle().apply {
                         putSerializable(Utils.EXTRA_ESTATE_MODEL, item as Serializable)
+                        putBoolean(Utils.EXTRA_TWO_PANE,true)
                     }
                 }
                 parentActivity.supportFragmentManager

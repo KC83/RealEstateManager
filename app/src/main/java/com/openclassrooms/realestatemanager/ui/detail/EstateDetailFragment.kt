@@ -1,5 +1,6 @@
 package com.openclassrooms.realestatemanager.ui.detail
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.google.android.material.tabs.TabLayout
 import com.openclassrooms.realestatemanager.R
 import com.openclassrooms.realestatemanager.data.model.EstateImage
 import com.openclassrooms.realestatemanager.data.model.EstateModel
+import com.openclassrooms.realestatemanager.ui.form.EstateFormActivity
 import com.openclassrooms.realestatemanager.ui.form.ImageViewPagerAdapter
 import com.openclassrooms.realestatemanager.utils.ChipItem
 import com.openclassrooms.realestatemanager.utils.Utils
@@ -125,9 +127,17 @@ class EstateDetailFragment : Fragment() {
                 }
             }
 
-            if (comeFromMaps || twoPane) {
+            if (!twoPane) {
                 rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).visibility = View.INVISIBLE
+            } else {
+                val estateModel = it
+                rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).setOnClickListener {
+                    val formIntent = Intent(this.context, EstateFormActivity::class.java)
+                    formIntent.putExtra(Utils.EXTRA_ESTATE_MODEL, estateModel)
+                    activity?.startActivityForResult(formIntent, Utils.FORM_ACTIVITY_REQUEST)
+                }
             }
+
         }
         return rootView
     }
