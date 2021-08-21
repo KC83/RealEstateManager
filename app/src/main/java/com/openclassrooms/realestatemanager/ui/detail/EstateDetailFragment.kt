@@ -127,14 +127,16 @@ class EstateDetailFragment : Fragment() {
                 }
             }
 
-            if (!twoPane) {
-                rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).visibility = View.INVISIBLE
-            } else {
+            if (twoPane) {
                 val estateModel = it
                 rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).setOnClickListener {
                     val formIntent = Intent(this.context, EstateFormActivity::class.java)
                     formIntent.putExtra(Utils.EXTRA_ESTATE_MODEL, estateModel)
                     activity?.startActivityForResult(formIntent, Utils.FORM_ACTIVITY_REQUEST)
+                }
+            } else {
+                if (rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form) != null) {
+                    rootView.findViewById<FloatingActionButton>(R.id.estate_detail_button_form).visibility = View.INVISIBLE
                 }
             }
 
@@ -159,8 +161,16 @@ class EstateDetailFragment : Fragment() {
         item?.let {
             if (internetManager.isConnected()) {
                 // If Internet is available, get the map
-                val src: String = Utils.getMapsURL(this.requireContext(), it.estate, getString(R.string.GOOGLE_API_KEY))
-                Picasso.get().load(src).into(activity?.findViewById(R.id.detail_map_image))
+                val src: String = Utils.getMapsURL(
+                    this.requireContext(),
+                    it.estate,
+                    getString(R.string.GOOGLE_API_KEY)
+                )
+                if (activity != null) {
+                    if (activity?.findViewById<ImageView>(R.id.detail_map_image) != null) {
+                        Picasso.get().load(src).into(activity?.findViewById(R.id.detail_map_image))
+                    }
+                }
             }
         }
     }
